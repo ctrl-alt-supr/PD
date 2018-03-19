@@ -114,7 +114,7 @@ DunGen.Enums.Tile={
         name: "Wall",
         floorTile: false
     },
-    4	    : {
+    4	    : { 
         symbol:'+',
         name: "ClosedDoor",
         floorTile: true

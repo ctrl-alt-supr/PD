@@ -1,3 +1,4 @@
 plugins/index.html
 plugins/rmmv-pixi.d.ts
 plugins/jsconfig.json
+plugins/DunGen.js
