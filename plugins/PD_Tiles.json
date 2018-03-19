@@ -8,7 +8,11 @@
         "description":"You can't see the bottom.",
         "through":false,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":true
     },
     {
         "tileId":1,
@@ -19,7 +23,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":2,
@@ -30,7 +38,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":3,
@@ -41,7 +53,11 @@
         "description":"",
         "through":false,
         "occluder":true,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":4,
@@ -52,7 +68,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":1
+        "eventId":1,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":5,
@@ -63,7 +83,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":2
+        "eventId":2,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":6,
@@ -74,7 +98,11 @@
         "description":"This door is locked, you need a matching key to unlock it.",
         "through":true,
         "occluder":false,
-        "eventId":3
+        "eventId":3,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":7,
@@ -85,7 +113,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":4
+        "eventId":4,
+        "flamable":true,
+        "hidden":true,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":8,
@@ -96,7 +128,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":9,
@@ -107,7 +143,11 @@
         "description":"",
         "through":false,
         "occluder":true,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":10,
@@ -118,7 +158,11 @@
         "description":"Dense vegetation blocks the view.",
         "through":true,
         "occluder":false,
-        "eventId":5
+        "eventId":5,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":11,
@@ -129,7 +173,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":6
+        "eventId":6,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":12,
@@ -140,7 +188,11 @@
         "description":"Embers cover the floor.",
         "through":true,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":13,
@@ -151,7 +203,11 @@
         "description":"In case of burning step into the water to extinguish the fire.",
         "through":true,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":true,
+        "avoid":false
     },
     {
         "tileId":14,
@@ -162,7 +218,11 @@
         "description":"The wooden barricade is firmly set but has dried over the years. Might it burn?",
         "through":true,
         "occluder":false,
-        "eventId":7
+        "eventId":7,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":15,
@@ -173,7 +233,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":8
+        "eventId":8,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":16,
@@ -184,7 +248,11 @@
         "description":"Drop some seeds here to cook a potion.",
         "through":false,
         "occluder":false,
-        "eventId":9
+        "eventId":9,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":17,
@@ -195,7 +263,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":10
+        "eventId":10,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":true
     },
     {
         "tileId":18,
@@ -206,7 +278,11 @@
         "description":"The well has run dry.",
         "through":true,
         "occluder":false,
-        "eventId":11
+        "eventId":11,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":19,
@@ -217,7 +293,11 @@
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":20,
@@ -228,7 +308,11 @@
         "description":"Someone wanted to adorn this place, but failed, obviously.",
         "through":false,
         "occluder":false,
-        "eventId":-1
+        "eventId":-1,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":21,
@@ -239,7 +323,11 @@
         "description":"Stairs lead up to the upper depth.",
         "through":false,
         "occluder":false,
-        "eventId":12
+        "eventId":12,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":22,
@@ -250,7 +338,11 @@
         "description":"Stairs lead down to the lower depth.",
         "through":false,
         "occluder":false,
-        "eventId":13
+        "eventId":13,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":23,
@@ -261,7 +353,11 @@
         "description":"Stairs lead down to the lower depth.",
         "through":false,
         "occluder":false,
-        "eventId":14
+        "eventId":14,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":24,
@@ -272,7 +368,11 @@
         "description":"Heavy bars block the stairs leading down.",
         "through":false,
         "occluder":false,
-        "eventId":15
+        "eventId":15,
+        "flamable":false,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     },
     {
         "tileId":25,
@@ -283,6 +383,10 @@
         "description":"You can't read the text from here.",
         "through":false,
         "occluder":false,
-        "eventId":16
+        "eventId":16,
+        "flamable":true,
+        "hidden":false,
+        "liquid":false,
+        "avoid":false
     }    
 ]
