@@ -2,7 +2,7 @@
 // SD_FOW_FOV.js
 //=============================================================================
 /*:
- * @plugindesc 4 - Implements the fog of war (FOW) and field of view (FOV) code the engine.
+ * @plugindesc 5 - Implements the fog of war (FOW) and field of view (FOV) code the engine.
  * @author Alex
  *
  * @help Sin comandos de plugin.

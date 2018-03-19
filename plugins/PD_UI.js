@@ -2,7 +2,7 @@
 // SD_UI.js
 //=============================================================================
 /*:
- * @plugindesc 2 - Templates for some commonly used user interface elements.
+ * @plugindesc 3 - Templates for some commonly used user interface elements.
  * @author Alex
  *
  * @help Sin comandos de plugin.

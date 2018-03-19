@@ -1,4 +1,14 @@
-[
+//=============================================================================
+// SD_Generator.js
+//=============================================================================
+/*:
+ * @plugindesc 2 - An index of all available mapping tiles in the system.
+ * @author Alex
+ *
+ * @help Sin comandos de plugin.
+ * */
+
+PD.Tiles=[
     {
         "tileId":0,
         "tileInternalName":"VOID",
@@ -645,4 +655,4 @@
         "avoid":false
     }    
     
-]
+];

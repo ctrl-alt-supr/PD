@@ -2,7 +2,7 @@
 // SD_Pathfinding.js
 //=============================================================================
 /*:
- * @plugindesc 5 - Allows characters to calculate movement routes without getting stuck.
+ * @plugindesc 6 - Allows characters to calculate movement routes without getting stuck.
  * @author Alex
  *
  * @help Sin comandos de plugin.
