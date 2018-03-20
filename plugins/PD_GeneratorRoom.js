@@ -15,9 +15,16 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         this.neigbours=[];
         this.connected=[];
     }
-    PD.Generator.Dungeon.Door.prototype = Object.create(PD.Generator.Dungeon.ARect.prototype);
-    PD.Generator.Dungeon.Door.prototype.constructor = PD.Generator.Dungeon.Room;
-
+    PD.Generator.Dungeon.Room.prototype = Object.create(PD.Generator.Dungeon.ARect.prototype);
+    PD.Generator.Dungeon.Room.prototype.constructor = PD.Generator.Dungeon.Room;
+    PD.Generator.Dungeon.Room.prototype.addNeigbour=function( otherRoom ) {
+		var intersectRect = this.intersect( otherRoom );
+		if ((intersectRect.width() == 0 && intersectRect.height() >= 3) || 
+			(intersectRect.height() == 0 && intersectRect.width() >= 3)) {
+                this.neigbours.add( otherRoom );
+			    otherRoom.neigbours.add( this );
+		}
+	}
     /**
      * @class A door
      * @extends PD.Generator.Dungeon.Point
