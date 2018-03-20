@@ -10,8 +10,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
      * @property {PD.Generator.Dungeon.Room} connected.room
      * @property {PD.Generator.Dungeon.Door} connected.door
      */
-    PD.Generator.Dungeon.Room=function(x, y){
-        PD.Generator.Dungeon.ARect.prototype.create.call(this, x, y);
+    PD.Generator.Dungeon.Room=function(l, t, r, b){
+        PD.Generator.Dungeon.ARect.prototype.constructor.call(this, l, t, r, b)
         this._distance=0;
         this._price=1;
         this._neigbours=[];
@@ -23,8 +23,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 		var intersectRect = this.intersect( otherRoom );
 		if ((intersectRect.width() == 0 && intersectRect.height() >= 3) || 
 			(intersectRect.height() == 0 && intersectRect.width() >= 3)) {
-                this._neigbours.add( otherRoom );
-			    otherRoom._neigbours.add( this );
+                this._neigbours.push( otherRoom );
+			    otherRoom._neigbours.push( this );
 		}
     }
     PD.Generator.Dungeon.Room.prototype.neigbours=function() {

@@ -2,11 +2,24 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     console.error("PD_GeneratorRect is meant to be imported AFTER PD_Generator!");
 } else{
     PD.Generator.Dungeon.ARect=function(l, t, r, b){
-        this.top=t;
-        this.bottom=b;
-        this.left=l;
-        this.right=r;
+        if(l==undefined && t==undefined && r==undefined && b==undefined){
+            this.top=0;
+            this.left=0;
+            this.right=0;
+            this.bottom=0;
+        }else if(l.constructor.prototype instanceof PD.Generator.Dungeon.ARect || l.constructor===PD.Generator.Dungeon.ARect){  //ARect as the first parameter
+            this.top=l.top;
+            this.bottom=l.bottom;
+            this.left=l.left;
+            this.right=l.right;
+        }else{
+            this.top=t;
+            this.bottom=b;
+            this.left=l;
+            this.right=r;
+        }
     }
+    PD.Generator.Dungeon.ARect.prototype.constructor=PD.Generator.Dungeon.ARect;
     PD.Generator.Dungeon.ARect.prototype.width=function(){
         return this.right-this.left;
     }
@@ -31,7 +44,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         return this;
     }
     PD.Generator.Dungeon.ARect.prototype.intersect=function( other ) {
-        var res = new PD.Generator.Dungeon.ARect(Math.max( left, other.left ),Math.max( top, other.top ),Math.min( right, other.right ),Math.min( bottom, other.bottom ));
+        var res = new PD.Generator.Dungeon.ARect(Math.max( this.left, other.left ),Math.max( this.top, other.top ),Math.min( this.right, other.right ),Math.min( this.bottom, other.bottom ));
         return res;
     }
     PD.Generator.Dungeon.ARect.prototype.x=function(){

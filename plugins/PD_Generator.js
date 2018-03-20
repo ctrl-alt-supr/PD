@@ -77,6 +77,26 @@
  * 
 */
 
+
+//ToDo: Eliminar esto cuando ya no esté debugueando fuera del MV
+var generateTestGameMap=function(){
+    $gameMap={};
+    $gameMap.width=function(){
+        return 20;
+    }
+    $gameMap.height=function(){
+        return 20;
+    }
+}
+try{
+    if($gameMap==undefined){
+        generateTestGameMap();
+    }
+}catch(err){
+    generateTestGameMap();
+}
+
+
 var PD=PD || {};
 PD.Generator=PD.Generator||{};
 
@@ -126,6 +146,8 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
         do{
             this._exitRoom=PD.Helpers.randomFrom(this._rooms);
         }while(this._exitRoom==this._entranceRoom || this._exitRoom.width()<4 || this._exitRoom.height()<4);
+        this.buildDistanceMap(this._rooms, this._exitRoom);
+        distance = this._entranceRoom.distance();
         retry+=1;
         if(retry>10){
             return false;
@@ -192,7 +214,7 @@ PD.Generator.Dungeon.prototype._splitRect=function(rectToSplit){
         this._splitRect(new PD.Generator.Dungeon.ARect(rectToSplit.left, rectToSplit.top, rectToSplit.right, vh));
         this._splitRect(new PD.Generator.Dungeon.ARect(rectToSplit.left, vh, rectToSplit.right, rectToSplit.bottom));
     }else if((Math.random()<=(this._minRoomSize * this._maxRoomSize / rectToSplit.square()) && w<= this._maxRoomSize && h<=this._maxRoomSize) || w < this.minRoomSize || h < this.minRoomSize){
-        this._rooms.push(rectToSplit);
+        this._rooms.push(new PD.Generator.Dungeon.Room(rectToSplit));
     }else{
         if(Math.random() < (w - 2)/(w + h - 4)){
             var vw=PD.Helpers.randomInteger(rectToSplit.left+3, rectToSplit.right-3);
@@ -214,23 +236,18 @@ PD.Generator.Dungeon.prototype.buildDistanceMap=function( allRooms, focusRoom ) 
     },this);
     var queue=[];
     focusRoom.distance(0);
-
-    // LinkedList<Node> queue = new LinkedList<Node>();
-    
-    // focus.distance( 0 );
-    // queue.add( focus );
-    
-    // while (!queue.isEmpty()) {
-        
-    //     Node node = queue.poll();
-    //     int distance = node.distance();
-    //     int price = node.price();
-        
-    //     for (Node edge : node.edges()) {
-    //         if (edge.distance() > distance + price) {
-    //             queue.add( edge );
-    //             edge.distance( distance + price );
-    //         }
-    //     }
-    // }
+    queue.push(focusRoom);
+    while (!queue.length==0) {
+        var node=queue.shift();
+        var distance=node.distance();
+        var price=1;      //node.price();
+        var susEdges=node.neigbours();
+        for (var edgeIndx = 0; edgeIndx < susEdges.length; edgeIndx++) {
+            var edge = susEdges[edgeIndx];
+            if(edge.distance() > distance+price){
+                edge.distance(distance+price);
+                queue.push(edge);
+            }
+        }
+    }
 }
