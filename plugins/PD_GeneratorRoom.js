@@ -12,7 +12,9 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
      */
     PD.Generator.Dungeon.Room=function(x, y){
         PD.Generator.Dungeon.ARect.prototype.create.call(this, x, y);
-        this.neigbours=[];
+        this._distance=0;
+        this._price=1;
+        this._neigbours=[];
         this.connected=[];
     }
     PD.Generator.Dungeon.Room.prototype = Object.create(PD.Generator.Dungeon.ARect.prototype);
@@ -21,9 +23,16 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 		var intersectRect = this.intersect( otherRoom );
 		if ((intersectRect.width() == 0 && intersectRect.height() >= 3) || 
 			(intersectRect.height() == 0 && intersectRect.width() >= 3)) {
-                this.neigbours.add( otherRoom );
-			    otherRoom.neigbours.add( this );
+                this._neigbours.add( otherRoom );
+			    otherRoom._neigbours.add( this );
 		}
+    }
+    PD.Generator.Dungeon.Room.prototype.neigbours=function() {
+		return this._neigbours;
+    }
+    PD.Generator.Dungeon.Room.prototype.distance=function(newDist) {
+        if(newDist==undefined||newDist==null) return this._distance;
+		this._distance=newDist;
 	}
     /**
      * @class A door

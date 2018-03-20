@@ -205,3 +205,32 @@ PD.Generator.Dungeon.prototype._splitRect=function(rectToSplit){
         }
     }
 }
+
+
+PD.Generator.Dungeon.prototype.buildDistanceMap=function( allRooms, focusRoom ) {
+		
+    allRooms.forEach(function(er){
+        er.distance(Number.MAX_SAFE_INTEGER);
+    },this);
+    var queue=[];
+    focusRoom.distance(0);
+
+    // LinkedList<Node> queue = new LinkedList<Node>();
+    
+    // focus.distance( 0 );
+    // queue.add( focus );
+    
+    // while (!queue.isEmpty()) {
+        
+    //     Node node = queue.poll();
+    //     int distance = node.distance();
+    //     int price = node.price();
+        
+    //     for (Node edge : node.edges()) {
+    //         if (edge.distance() > distance + price) {
+    //             queue.add( edge );
+    //             edge.distance( distance + price );
+    //         }
+    //     }
+    // }
+}
