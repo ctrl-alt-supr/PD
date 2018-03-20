@@ -156,6 +156,12 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
 
     this._entranceRoom=PD.Generator.Dungeon.Room.Type.ENTRANCE;
     this._exitRoom=PD.Generator.Dungeon.Room.Type.EXIT;
+
+    this._connected=[];
+    this._connected.push(this._entranceRoom);
+
+    var pathList = this.buildPath( this._rooms, this._entranceRoom, this._exitRoom );
+
 }
 PD.Generator.Dungeon.prototype._initRooms=function(){
     this._rooms=[];
@@ -230,7 +236,6 @@ PD.Generator.Dungeon.prototype._splitRect=function(rectToSplit){
 
 
 PD.Generator.Dungeon.prototype.buildDistanceMap=function( allRooms, focusRoom ) {
-		
     allRooms.forEach(function(er){
         er.distance(Number.MAX_SAFE_INTEGER);
     },this);
@@ -250,4 +255,28 @@ PD.Generator.Dungeon.prototype.buildDistanceMap=function( allRooms, focusRoom ) 
             }
         }
     }
+}
+
+PD.Generator.Dungeon.prototype.buildPath=function(allRooms, fromRoom, toRoom) {
+    var path=[];
+    var room=fromRoom;
+    while(room!=toRoom){
+        var min=room.distance();
+        var next=null;
+        var edges=room.neigbours();
+        for (var edgeIndx = 0; edgeIndx < edges.length; edgeIndx++) {
+            var edge = edges[edgeIndx];
+            var dis=edge.distance();
+            if(dis<min){
+                min=dis;
+                next=edge;
+            }
+        }
+        if(next==null){
+            return null;
+        }
+        path.add(next);
+        room=next
+    }
+    return path;
 }
