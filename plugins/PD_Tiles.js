@@ -7,7 +7,7 @@
  *
  * @help Sin comandos de plugin.
  * */
-
+var PD=PD || {};
 PD.Tiles=[
     {
         "tileId":0,
