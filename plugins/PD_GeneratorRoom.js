@@ -31,4 +31,32 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Door.prototype.set=function(type){
         this.type=type;
     }
+
+
+    PD.Generator.Dungeon.Room.Type={
+        STANDARD	: 0,
+		ENTRANCE	: 1,
+		EXIT		: 2,
+		BOSS_EXIT	: 3,
+		TUNNEL		: 4,
+		PASSAGE		: 5,
+		SHOP		: 6,
+		BLACKSMITH	: 7,
+		TREASURY	: 8,
+		ARMORY		: 9,
+		LIBRARY		: 10,
+		LABORATORY	: 11,
+		VAULT		: 12,
+		TRAPS		: 13,
+		STORAGE		: 14,
+		MAGIC_WELL	: 15,
+		GARDEN		: 16,
+		CRYPT		: 17,
+		STATUE		: 18,
+		POOL		: 19,
+		RAT_KING	: 20,
+		WEAK_FLOOR	: 21,
+		PIT			: 22,
+		ALTAR		: 23
+    }
 }

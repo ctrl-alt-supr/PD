@@ -89,15 +89,13 @@ PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
     this._width=$gameMap.width();
     this._minRoomSize=7;
     this._maxRoomSize=9;
-    this._rooms=[];
-    this._tiles=[];
-    this.preGenerate(" ");
+    this.reset();
     this.generate();
-    this.postGenerate(".");
+    this._postGenerate(".");
     this.print();
 
 }
-PD.Generator.Dungeon.prototype.preGenerate=function(baseTileId){
+PD.Generator.Dungeon.prototype._preGenerate=function(baseTileId){
     this._tiles=[];
     for (var y = 0; y < this._height; y++) {
         this._tiles[y]=[];
@@ -109,12 +107,33 @@ PD.Generator.Dungeon.prototype.preGenerate=function(baseTileId){
 PD.Generator.Dungeon.prototype.reset=function(){
     this._rooms=[];
     this._tiles=[];
-    this.preGenerate(" ");
+    this._connected=[];
+    this._entranceRoom=null;
+    this._exitRoom=null;
+    this._preGenerate(" ");
 }
 PD.Generator.Dungeon.prototype.generate=function(baseTileId){
     if(!this._initRooms()){
-        
+        return false;
     }
+    var distance=0;
+    var retry=0;
+    var minDistance=Math.floor(Math.sqrt(this._rooms.length));
+    do{
+        do{
+            this._entranceRoom=PD.Helpers.randomFrom(this._rooms);
+        }while(this._entranceRoom.width()<4 || this._entranceRoom.height()<4);
+        do{
+            this._exitRoom=PD.Helpers.randomFrom(this._rooms);
+        }while(this._exitRoom==this._entranceRoom || this._exitRoom.width()<4 || this._exitRoom.height()<4);
+        retry+=1;
+        if(retry>10){
+            return false;
+        }
+    }while(distance<minDistance)
+
+    this._entranceRoom=PD.Generator.Dungeon.Room.Type.ENTRANCE;
+    this._exitRoom=PD.Generator.Dungeon.Room.Type.EXIT;
 }
 PD.Generator.Dungeon.prototype._initRooms=function(){
     this._rooms=[];
@@ -130,7 +149,7 @@ PD.Generator.Dungeon.prototype._initRooms=function(){
     }
     return true;
 }
-PD.Generator.Dungeon.prototype.postGenerate=function(char){
+PD.Generator.Dungeon.prototype._postGenerate=function(char){
     for (var roomIndex = 0; roomIndex < this._rooms.length; roomIndex++) {
         var element = this._rooms[roomIndex];
         //if(roomIndex%2==0)
