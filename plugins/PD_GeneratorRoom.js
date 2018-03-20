@@ -16,6 +16,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         this._price=1;
         this._neigbours=[];
         this.connected=[];
+        this._type=null;
+        this.GUID=Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)+Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
     PD.Generator.Dungeon.Room.prototype = Object.create(PD.Generator.Dungeon.ARect.prototype);
     PD.Generator.Dungeon.Room.prototype.constructor = PD.Generator.Dungeon.Room;
@@ -27,12 +29,26 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 			    otherRoom._neigbours.push( this );
 		}
     }
+    PD.Generator.Dungeon.Room.prototype.type=function(type){
+        if(type==undefined || type==null) return this._type;
+        this._type=type;
+    }
     PD.Generator.Dungeon.Room.prototype.neigbours=function() {
 		return this._neigbours;
     }
     PD.Generator.Dungeon.Room.prototype.distance=function(newDist) {
         if(newDist==undefined||newDist==null) return this._distance;
 		this._distance=newDist;
+    }
+    PD.Generator.Dungeon.Room.prototype.price=function(newPrice) {
+        if(newPrice==undefined||newPrice==null) return this._price;
+		this._price=newPrice;
+    }
+    PD.Generator.Dungeon.Room.prototype.connect=function( otherRoom ) {
+		if (!(this.connected.map(function(e) { return e.GUID; }).indexOf(otherRoom.GUID)>-1)) {	
+			this.connected.push( {room:otherRoom, door:null} );
+			otherRoom.connected.push( {room:this, door:null} );			
+		}
 	}
     /**
      * @class A door
@@ -40,13 +56,10 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
      */
     PD.Generator.Dungeon.Door=function(x, y){
         PD.Generator.Dungeon.Point.prototype.create.call(this, x, y);
-        this.type=null;
+
     }
     PD.Generator.Dungeon.Door.prototype = Object.create(PD.Generator.Dungeon.Point.prototype);
     PD.Generator.Dungeon.Door.prototype.constructor = PD.Generator.Dungeon.Door;
-    PD.Generator.Dungeon.Door.prototype.set=function(type){
-        this.type=type;
-    }
 
 
     PD.Generator.Dungeon.Room.Type={
