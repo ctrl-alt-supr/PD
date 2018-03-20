@@ -92,7 +92,7 @@ PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
     this._rooms=[];
     this._tiles=[];
     this.preGenerate(" ");
-    this._splitRect(new PD.Generator.Dungeon.ARect(0,0,this._width-1,this._height-1));
+    this.generate();
     this.postGenerate(".");
     this.print();
 
@@ -106,10 +106,34 @@ PD.Generator.Dungeon.prototype.preGenerate=function(baseTileId){
         }
     }
 }
+PD.Generator.Dungeon.prototype.reset=function(){
+    this._rooms=[];
+    this._tiles=[];
+    this.preGenerate(" ");
+}
+PD.Generator.Dungeon.prototype.generate=function(baseTileId){
+    if(!this._initRooms()){
+        
+    }
+}
+PD.Generator.Dungeon.prototype._initRooms=function(){
+    this._rooms=[];
+    var fullMapRect=new PD.Generator.Dungeon.ARect(0,0,this._width-1,this._height-1)
+    this._splitRect(fullMapRect);
+    if(this._rooms.length<8){
+        return false;
+    }
+    for (var i = 0; i < this._rooms.length; i++) {
+        for (var j = i+1; j < this._rooms.length; j++) {
+            this._rooms[i].addNeigbour(this._rooms[j]);
+        }
+    }
+    return true;
+}
 PD.Generator.Dungeon.prototype.postGenerate=function(char){
     for (var roomIndex = 0; roomIndex < this._rooms.length; roomIndex++) {
         var element = this._rooms[roomIndex];
-        if(roomIndex%2==0)
+        //if(roomIndex%2==0)
         for (var y = element.top; y < element.bottom; y++) {
             for (var x = element.left; x < element.right; x++) {
                 this._tiles[y][x]=char;
@@ -127,13 +151,13 @@ PD.Generator.Dungeon.prototype.print=function(){
     }
     console.log(res);
 }
-PD.Generator.Dungeon.prototype._getTileId=function(x, y){
+PD.Generator.Dungeon.prototype.getTileId=function(x, y){
     if (x < 0 || y < 0 || x >= this._width || y >= this._height){
         return 0;
     }
     return this._tiles[y][x];
 }
-PD.Generator.Dungeon.prototype._setTileId=function(x, y, tileId){
+PD.Generator.Dungeon.prototype.setTileId=function(x, y, tileId){
     this._tiles[y][x]=tileId;
 }
 
