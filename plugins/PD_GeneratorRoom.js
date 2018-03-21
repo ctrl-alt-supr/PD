@@ -46,8 +46,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     }
     PD.Generator.Dungeon.Room.prototype.center=function() {
 		return new PD.Generator.Dungeon.Point( 
-			(this.left + this.right) / 2 + (((this.right - this.left) & 1) == 1 ? PD.Helpers.randomInteger( 2 ) : 0),
-            (this.top + this.bottom) / 2 + (((this.bottom - this.top) & 1) == 1 ? PD.Helpers.randomInteger( 2 ) : 0) 
+			Math.round((this.left + this.right) / 2 + (((this.right - this.left) & 1) == 1 ? PD.Helpers.randomInteger( 2 ) : 0)),
+            Math.round((this.top + this.bottom) / 2 + (((this.bottom - this.top) & 1) == 1 ? PD.Helpers.randomInteger( 2 ) : 0)) 
         );
 	}
     PD.Generator.Dungeon.Room.prototype.connect=function( otherRoom ) {
@@ -96,10 +96,10 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     }
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
-            return  PD.Generator.Dungeon.Painters.SimpleTunnel;
-        }else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
-            return  PD.Generator.Dungeon.Painters.SimplePassage;
-        }
-        return  PD.Generator.Dungeon.Painters.Simple;
+            return  new PD.Generator.Dungeon.Painters.SimplestTunnel();
+        }//else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
+        //    return  new PD.Generator.Dungeon.Painters.SimplePassage();
+        //}
+        return  new PD.Generator.Dungeon.Painters.Simple();
     }
 }

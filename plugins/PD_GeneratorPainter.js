@@ -4,8 +4,9 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 } else{
     PD.Generator.Dungeon.Painters=[];
     PD.Generator.Dungeon.Painter=function(){
-        throw new Error('This is a static class');
+        //throw new Error('This is a static class');
     }
+    PD.Generator.Dungeon.Painter.prototype.constructor=PD.Generator.Dungeon.Painter;
     PD.Generator.Dungeon.Painter.prototype.setByLinearPosition=function(dungeonGenerator, cell, val){
         
     }

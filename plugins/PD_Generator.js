@@ -247,17 +247,18 @@ PD.Generator.Dungeon.prototype.paint=function(){
         if(room.type()!=null){
             this.placeDoors(room);
             var typePainter=PD.Generator.Dungeon.Room.Type.getPainter(room.type());
-            // TODO TODO TODO TODO TODO TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            //      /// ARREGLAR LOS PAINTERS. NO USAR UNA REFERENCIA A SU CONSTRUCTOR SI NO SU NOMBRE
-            // TODO TODO TODO TODO TODO TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-            typePainter.paint.call(typePainter, this, room);
+            if(typePainter!=undefined && typePainter!=null){
+                typePainter.paint(this, room);
+            }else{
+                console.warn("No painter obtained for type "+room.type());
+            }
         }else{
 
         }
     }
     for (var roomIndex = 0; roomIndex < this._rooms.length; roomIndex++) {
         var room = this._rooms[roomIndex];
-        //this.paintDoors(room);
+        this.paintDoors(room);
     }
 }
 PD.Generator.Dungeon.prototype.placeDoors=function(room) {
@@ -284,6 +285,15 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
                 neig.connected.push({room:room, door:door});
             }
         }
+    }
+}
+PD.Generator.Dungeon.prototype.paintDoors=function(room) {
+    var connectedDoors=room.connected.map(function(ea){
+        return ea.door;
+    });
+    for (var doorIndex = 0; doorIndex < connectedDoors.length; doorIndex++) {
+        var door = connectedDoors[doorIndex];
+        this.setTileId(door.x, door.y, "D");
     }
 }
 PD.Generator.Dungeon.prototype._initRooms=function(){
