@@ -2,7 +2,7 @@
 // SD_Generator.js
 //=============================================================================
 /*:
- * @plugindesc 2 - An index of all available mapping tiles in the system.
+ * @plugindesc C3 - An index of all available mapping tiles in the system.
  * @author Alex
  *
  * @help Sin comandos de plugin.

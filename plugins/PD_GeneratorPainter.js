@@ -1,4 +1,10 @@
 
+/*:
+ * @plugindesc G4 - Base class for other painters. It takes care of painting each room depending on the room type.
+ * @author Alex
+ *
+ * @help Place AFTER PD_GeneratorRect!!!
+ * */
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     console.error("PD_GeneratorPainter is meant to be imported AFTER PD_Generator!");
 } else{

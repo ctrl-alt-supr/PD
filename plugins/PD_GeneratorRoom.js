@@ -1,3 +1,9 @@
+/*:
+ * @plugindesc G3 - Class that represents the rooms the generator creates
+ * @author Alex
+ *
+ * @help Place AFTER PD_GeneratorRect!!!
+ * */
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     console.error("PD_GeneratorRoom is meant to be imported AFTER PD_Generator!");
 } else{

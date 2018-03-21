@@ -1,3 +1,9 @@
+/*:
+ * @plugindesc C4 - Manages the game
+ * @author Alex
+ *
+ * */
+
 PD=PD||{};
 
 PD.Dungeon=function() {

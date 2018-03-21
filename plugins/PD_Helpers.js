@@ -2,7 +2,7 @@
 // SD_Helpers.js
 //=============================================================================
 /*:
- * @plugindesc 0 - Some useful functions that are used by the system.
+ * @plugindesc C1 - Some useful functions that are used by the system.
  * @author Alex
  *
  * @help Sin comandos de plugin.

@@ -2,7 +2,7 @@
 // SD_Global.js
 //=============================================================================
 /*:
- * @plugindesc 1 - Takes care of the global save game where, for example, unlocked classes are stored.
+ * @plugindesc C2 - Takes care of the global save game where, for example, unlocked classes are stored.
  * @author Alex
  *
  * @help Sin comandos de plugin.

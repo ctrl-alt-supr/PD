@@ -1,3 +1,9 @@
+/*:
+ * @plugindesc G2 - Classes representing rectangles and points required by the generator
+ * @author Alex
+ *
+ * @help Place AFTER PD_Generator!!!
+ * */
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     console.error("PD_GeneratorRect is meant to be imported AFTER PD_Generator!");
 } else{

@@ -48,7 +48,7 @@
 // SD_Generator.js
 //=============================================================================
 /*:
- * @plugindesc 4 - Generates dungeon levels during runtime.
+ * @plugindesc G1 - Generates dungeon levels during runtime.
  * @author Alex
  *
  * @help Sin comandos de plugin.
