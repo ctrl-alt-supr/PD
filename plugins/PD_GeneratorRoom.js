@@ -96,7 +96,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     }
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
-            return  new PD.Generator.Dungeon.Painters.SimplestTunnel();
+            return  new PD.Generator.Dungeon.Painters.Tunnel();
         }
         // }else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
         //     return  PD.Generator.Dungeon.Painters.SimplePassage;

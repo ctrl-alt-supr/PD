@@ -123,12 +123,13 @@ PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
     this.print();
 
 }
-PD.Generator.Dungeon.prototype._preGenerate=function(baseTileId){
+PD.Generator.Dungeon.prototype._preGenerate=function(){
     this._tiles=[];
+    var voidTile=PD.Tiles.name2id("VOID");
     for (var y = 0; y < this._height; y++) {
         this._tiles[y]=[];
         for (var x = 0; x < this._width; x++) {
-            this._tiles[y][x]=baseTileId;
+            this._tiles[y][x]=voidTile;
         }
     }
 }
@@ -155,7 +156,7 @@ PD.Generator.Dungeon.prototype.reset=function(){
         PD.Generator.Dungeon.Room.Type.VAULT, 
         PD.Generator.Dungeon.Room.Type.ALTAR];
     this._specials=PD.Helpers.shuffleArray(this._specials);
-    this._preGenerate(" ");
+    this._preGenerate();
 }
 PD.Generator.Dungeon.prototype.generate=function(baseTileId){
     if(!this._initRooms()){
@@ -242,6 +243,7 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
 
 }
 PD.Generator.Dungeon.prototype.paint=function(){
+    var voidTile=PD.Tiles.name2id("VOID");
     for (var roomIndex = 0; roomIndex < this._rooms.length; roomIndex++) {
         var room = this._rooms[roomIndex];
         if(room.type()!=null){
@@ -252,8 +254,6 @@ PD.Generator.Dungeon.prototype.paint=function(){
             }else{
                 console.warn("No painter obtained for type "+room.type());
             }
-        }else{
-
         }
     }
     for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
@@ -288,12 +288,17 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
     }
 }
 PD.Generator.Dungeon.prototype.paintDoors=function(room) {
-    var connectedDoors=room.connected.map(function(ea){
-        return ea.door;
-    });
-    for (var doorIndex = 0; doorIndex < connectedDoors.length; doorIndex++) {
-        var door = connectedDoors[doorIndex];
-        this.setTileId(door.x, door.y, "D");
+    var doorTile=PD.Tiles.name2id("CLOSEDDOOR");
+    var floorTile=PD.Tiles.name2id("ROOMFLOOR");
+    for (var idx = 0; idx < room.connected.length; idx++) {
+        var roomanddoor = room.connected[idx];
+        var o_room=roomanddoor.room;
+        var door=roomanddoor.door;
+        if(room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL && o_room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL){
+            this.setTileId(door.x, door.y, floorTile);
+        }else{
+            this.setTileId(door.x, door.y, doorTile);
+        }
     }
 }
 PD.Generator.Dungeon.prototype._initRooms=function(){
@@ -459,7 +464,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
         if(room.type()==null){
             var cons=room.connected.length;
             if(cons==0){
-
+                console.log("Room with no connections!!!");
             }else if(PD.Helpers.randomInteger(cons*cons-1)==0){
                 room.type(PD.Generator.Dungeon.Room.Type.STANDARD);
                 count+=1;

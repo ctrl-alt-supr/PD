@@ -8,7 +8,11 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Painters.Simple.prototype.constructor=PD.Generator.Dungeon.Painters.Simple;
 
     PD.Generator.Dungeon.Painters.Simple.prototype.paint=function(dungeonGenerator, room){
-        this.fillByRect( dungeonGenerator, room, PD.Tiles.name2id("WALL") );
-		this.fillByRectOff( dungeonGenerator, room, 1, PD.Tiles.name2id("ROOMFLOOR") );
+        var floorTile=PD.Tiles.name2id("ROOMFLOOR");
+        var wallTile=PD.Tiles.name2id("WALL");
+        this.fillByRect( dungeonGenerator, room, wallTile );
+        this.fillByRectOff( dungeonGenerator, room, 1, floorTile );
+        var floorDecoTile=PD.Tiles.name2id("DECOFLOOR")
+        var wallDecoTile=PD.Tiles.name2id("DECOWALL")
     }
 }

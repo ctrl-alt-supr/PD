@@ -1,15 +1,15 @@
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     console.error("PD_GeneratorPainter is meant to be imported AFTER PD_Generator!");
 } else{
-    PD.Generator.Dungeon.Painters.SimpleTunnel=function(){
+    PD.Generator.Dungeon.Painters.Tunnel=function(){
         //throw new Error('This is a static class');
     }
-    PD.Generator.Dungeon.Painters.SimpleTunnel.prototype=Object.create(PD.Generator.Dungeon.Painter.prototype);
-    PD.Generator.Dungeon.Painters.SimpleTunnel.prototype.constructor=PD.Generator.Dungeon.Painters.SimpleTunnel;
-    PD.Generator.Dungeon.Painters.SimpleTunnel.prototype.paint=function(dungeonGenerator, room){
+    PD.Generator.Dungeon.Painters.Tunnel.prototype=Object.create(PD.Generator.Dungeon.Painter.prototype);
+    PD.Generator.Dungeon.Painters.Tunnel.prototype.constructor=PD.Generator.Dungeon.Painters.Tunnel;
+    PD.Generator.Dungeon.Painters.Tunnel.prototype.paint=function(dungeonGenerator, room){
         var floor=PD.Tiles.name2id("ROOMFLOOR");
         var centerPoint=room.center();
-        if(room.width()>room.height()  ||  (room.width()==room.height() && PD.Helpers.randomInteger(2)==0)){
+        if(room.width()>room.height()  ||  (room.width()==room.height() && PD.Helpers.randomInteger(1)==0)){
             var from = room.right -1;
             var to=room.left+1;
             var connectedDoors=room.connected.map(function(ea){
@@ -35,24 +35,20 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
                     if(door.x>to){
                         to=door.x;
                     }
-                    try{
-                        if(door.y!=centerPoint.y){
-                            for (var i = door.y+step; i !=centerPoint.y; i+=step) {
-                                this.setByCoord(dungeonGenerator, door.x, i, "A");
-                                if(Math.abs(i-centerPoint.y)>=50){
-                                    debugger;
-                                }
+                    if(door.y!=centerPoint.y){
+                        for (var i = door.y+step; i !=centerPoint.y; i+=step) {
+                            this.setByCoord(dungeonGenerator, door.x, i, floor);
+                            if(Math.abs(i-centerPoint.y)>=50){
+                                debugger;
                             }
-                        }else{
-                            this.setByCoord(dungeonGenerator, door.x, door.y+step, "a");
                         }
-                    }catch(er){
-                        console.warn(er);
+                    }else{
+                        this.setByCoord(dungeonGenerator, door.x, door.y+step, floor);
                     }
                 }
             }
             for (var i=from; i <= to; i++) {
-				this.setByCoord( dungeonGenerator, i, centerPoint.y, "z" );
+				this.setByCoord( dungeonGenerator, i, centerPoint.y, floor );
 			}
         }else{
             var from = room.bottom -1;
@@ -81,23 +77,19 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
                         to=door.y;
                     }
                     if(door.x!=centerPoint.x){
-                        try{
-                            for (var i = door.x+step; i !=centerPoint.x; i+=step) {
-                                this.setByCoord(dungeonGenerator, i, door.y, "B");
-                                if(Math.abs(i-centerPoint.x)>=50){
-                                    debugger;
-                                }
+                        for (var i = door.x+step; i !=centerPoint.x; i+=step) {
+                            this.setByCoord(dungeonGenerator, i, door.y, floor);
+                            if(Math.abs(i-centerPoint.x)>=50){
+                                debugger;
                             }
-                        }catch(er){
-                            console.warn(er);
                         }
                     }else{
-                        this.setByCoord(dungeonGenerator, door.x+step, door.y, "b");
+                        this.setByCoord(dungeonGenerator, door.x+step, door.y, floor);
                     }   
                 }
             }
             for (var i=from; i <= to; i++) {
-				this.setByCoord( dungeonGenerator, centerPoint.x, i, "Z" );
+				this.setByCoord( dungeonGenerator, centerPoint.x, i, floor );
 			}
         }
         
