@@ -62,12 +62,22 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
      * @class A point
      */
     PD.Generator.Dungeon.Point = function(x, y) {
-        this.x=x;
-        this.y=y;
+        if(x==undefined || y==undefined){
+            this.x=0;
+            this.y=0;
+        }else{
+            this.x=x;
+            this.y=y;
+        }
     }
     PD.Generator.Dungeon.Point.prototype.set = function(x, y) {
         this.x=x;
         this.y=y;
+        return this;
+    }
+    PD.Generator.Dungeon.Point.prototype.setByPoint = function(other) {
+        this.x=other.x;
+        this.y=other.y;
         return this;
     }
     PD.Generator.Dungeon.Point.prototype.clone = function() {
@@ -81,6 +91,11 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Point.prototype.offset = function(x, y) {
         this.x+=x;
         this.y+=y;
+        return this;
+    }
+    PD.Generator.Dungeon.Point.prototype.offsetByPoint = function(other) {
+        this.x+=other.x;
+        this.y+=other.y;
         return this;
     }
     PD.Generator.Dungeon.Point.prototype.equals = function(other) {

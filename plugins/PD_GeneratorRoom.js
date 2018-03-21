@@ -45,7 +45,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 		this._price=newPrice;
     }
     PD.Generator.Dungeon.Room.prototype.connect=function( otherRoom ) {
-		if (!(this.connected.map(function(e) { return e.GUID; }).indexOf(otherRoom.GUID)>-1)) {	
+		if (!(this.connected.map(function(e) { return e.room.GUID; }).indexOf(otherRoom.GUID)>-1)) {	
 			this.connected.push( {room:otherRoom, door:null} );
 			otherRoom.connected.push( {room:this, door:null} );			
 		}
@@ -55,7 +55,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
      * @extends PD.Generator.Dungeon.Point
      */
     PD.Generator.Dungeon.Door=function(x, y){
-        PD.Generator.Dungeon.Point.prototype.create.call(this, x, y);
+        PD.Generator.Dungeon.Point.prototype.constructor.call(this, x, y);
 
     }
     PD.Generator.Dungeon.Door.prototype = Object.create(PD.Generator.Dungeon.Point.prototype);
@@ -87,5 +87,11 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 		WEAK_FLOOR	: 21,
 		PIT			: 22,
 		ALTAR		: 23
+    }
+    PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
+        if(typeToGet){
+            
+        }
+        return  PD.Generator.Dungeon.Painter;
     }
 }

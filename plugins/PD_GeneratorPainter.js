@@ -31,5 +31,30 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Painter.fillByRectOff=function(dungeonGenerator, rect, m, val){
         this.fill(dungeonGenerator, rect.left+m, rect.top+m, rect.width() + 1 -m*2, rect.height() + 1-m*2, val);
     }
+    PD.Generator.Dungeon.Painter.drawInside=function(dungeonGenerator, room, pointFrom, n, val){
+        var stepPoint=new PD.Generator.Dungeon.Point();
+        if(pointFrom.x==room.left){
+            stepPoint.setByCoord(+1,0);
+        }else if(pointFrom.x==room.right){
+            stepPoint.setByCoord(-1,0);
+        }else if(pointFrom.y==room.top){
+            stepPoint.setByCoord(0,+1);
+        }else if(pointFrom.y==room.bottom){
+            stepPoint.setByCoord(0,-1);
+        }
 
+        var p=new PD.Generator.Dungeon.Point();
+        p.setByPoint(pointFrom);
+        p.offsetByPoint(stepPoint);
+        for (var i = 0; i < n; i++) {
+            if(val!=-1){
+                dungeonGenerator.setTileId(p.x, p.y, val);
+            }
+            p.offsetByPoint(stepPoint);       
+        }
+        return p;
+    }
+    PD.Generator.Dungeon.Painter.paint=function(dungeonGenerator, room){
+        console.log("You should override the paint method of this painter for it to function correctly!!");
+    }
 }
