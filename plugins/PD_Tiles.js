@@ -8,7 +8,20 @@
  * @help Sin comandos de plugin.
  * */
 var PD=PD || {};
-PD.Tiles=[
+PD.Tiles={};
+PD.Tiles.name2id=function(name){
+    return PD.Tiles.name2data(name).tileId;
+}
+PD.Tiles.name2data=function(name){
+    var list = PD.Tiles.data.filter(function(each){
+        return each.tileInternalName==name;
+    });
+    if(list.length>0){
+        return list[0];
+    }
+    return null;
+}
+PD.Tiles.data=[
     {
         "tileId":0,
         "tileInternalName":"VOID",

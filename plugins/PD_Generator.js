@@ -82,10 +82,10 @@
 var generateTestGameMap=function(){
     $gameMap={};
     $gameMap.width=function(){
-        return 20;
+        return 30;
     }
     $gameMap.height=function(){
-        return 20;
+        return 30;
     }
 }
 try{
@@ -119,7 +119,7 @@ PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
     if(!genOk){
         console.error("Couldn't create dungeon after 10 tryes");
     }
-    this._postGenerate(".");
+    //this._postGenerate(".");
     this.print();
 
 }
@@ -247,7 +247,10 @@ PD.Generator.Dungeon.prototype.paint=function(){
         if(room.type()!=null){
             this.placeDoors(room);
             var typePainter=PD.Generator.Dungeon.Room.Type.getPainter(room.type());
-            typePainter.paint(this, room);
+            // TODO TODO TODO TODO TODO TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            //      /// ARREGLAR LOS PAINTERS. NO USAR UNA REFERENCIA A SU CONSTRUCTOR SI NO SU NOMBRE
+            // TODO TODO TODO TODO TODO TODO !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+            typePainter.paint.call(typePainter, this, room);
         }else{
 
         }

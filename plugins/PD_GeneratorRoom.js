@@ -44,6 +44,12 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         if(newPrice==undefined||newPrice==null) return this._price;
 		this._price=newPrice;
     }
+    PD.Generator.Dungeon.Room.prototype.center=function() {
+		return new PD.Generator.Dungeon.Point( 
+			(this.left + this.right) / 2 + (((this.right - this.left) & 1) == 1 ? PD.Helpers.randomInteger( 2 ) : 0),
+            (this.top + this.bottom) / 2 + (((this.bottom - this.top) & 1) == 1 ? PD.Helpers.randomInteger( 2 ) : 0) 
+        );
+	}
     PD.Generator.Dungeon.Room.prototype.connect=function( otherRoom ) {
 		if (!(this.connected.map(function(e) { return e.room.GUID; }).indexOf(otherRoom.GUID)>-1)) {	
 			this.connected.push( {room:otherRoom, door:null} );
@@ -89,9 +95,11 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 		ALTAR		: 23
     }
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
-        if(typeToGet){
-            
+        if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
+            return  PD.Generator.Dungeon.Painters.SimpleTunnel;
+        }else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
+            return  PD.Generator.Dungeon.Painters.SimplePassage;
         }
-        return  PD.Generator.Dungeon.Painter;
+        return  PD.Generator.Dungeon.Painters.Simple;
     }
 }
