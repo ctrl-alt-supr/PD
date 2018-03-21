@@ -256,8 +256,8 @@ PD.Generator.Dungeon.prototype.paint=function(){
 
         }
     }
-    for (var roomIndex = 0; roomIndex < this._rooms.length; roomIndex++) {
-        var room = this._rooms[roomIndex];
+    for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
+        var room = this._connected[roomIndex];
         this.paintDoors(room);
     }
 }
@@ -268,9 +268,9 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
         if(door==null){
             var rct=room.intersect(neig);
             if(rct.width()==0){
-                door=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom));
+                door=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-1));
             }else{
-                door=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right), rct.top);
+                door=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-1), rct.top);
             }
             var indOfNeig=(room.connected.map(function(e) { return e.room.GUID; }).indexOf(neig.GUID));
             var indOfRoom=(neig.connected.map(function(e) { return e.room.GUID; }).indexOf(room.GUID));
@@ -428,7 +428,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
     for (var index = 0; index < this._rooms.length; index++) {
         var room = this._rooms[index];
         if(room.type()==null && room.connected.length==1){
-            if(this._specials.length>0 && room.width()>3 && room.height>3   &&  PD.Helpers.randomInteger(specialRooms*specialRooms+2)==0){
+            if(this._specials.length>0 && room.width()>3 && room.height>3   &&  PD.Helpers.randomInteger(specialRooms*specialRooms+1)==0){
                 if(this._depth%5==2 && this._specials.indexOf(PD.Generator.Dungeon.Room.Type.LABORATORY)>-1){
                     room.type(PD.Generator.Dungeon.Room.Type.LABORATORY);
                 }else{
@@ -437,7 +437,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
                 }
                 this._specials.splice(this._specials.indexOf(room.type()), 1);
                 specialRooms+=1;
-            }else if(PD.Helpers.randomInteger(2)==0){
+            }else if(PD.Helpers.randomInteger(1)==0){
                 var neigs=[];
                 for (var neigIndex = 0; neigIndex < room.neigbours().length; neigIndex++) {
                     var neig = room.neigbours()[neigIndex];
@@ -460,7 +460,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
             var cons=room.connected.length;
             if(cons==0){
 
-            }else if(PD.Helpers.randomInteger(cons*cons)==0){
+            }else if(PD.Helpers.randomInteger(cons*cons-1)==0){
                 room.type(PD.Generator.Dungeon.Room.Type.STANDARD);
                 count+=1;
             }else{
