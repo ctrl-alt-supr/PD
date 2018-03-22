@@ -11,7 +11,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         var floorTile=PD.Tiles.name2id("ROOMFLOOR");
         var wallTile=PD.Tiles.name2id("WALL");
         this.fillByRect( dungeonGenerator, room, wallTile );
-        this.fillByRectOff( dungeonGenerator, room, 1, floorTile );
+        this.fillByRectWithOffset( dungeonGenerator, room, 1, floorTile );
         var floorDecoTile=PD.Tiles.name2id("DECOFLOOR")
         var wallDecoTile=PD.Tiles.name2id("DECOWALL")
     }

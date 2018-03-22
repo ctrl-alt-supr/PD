@@ -6,16 +6,13 @@
  * @help Place AFTER PD_GeneratorRect!!!
  * */
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
-    console.error("PD_GeneratorPainter is meant to be imported AFTER PD_Generator!");
+    console.error("PD => PD_GeneratorPainter is meant to be imported AFTER PD_Generator!");
 } else{
     PD.Generator.Dungeon.Painters=[];
     PD.Generator.Dungeon.Painter=function(){
         //throw new Error('This is a static class');
     }
     PD.Generator.Dungeon.Painter.prototype.constructor=PD.Generator.Dungeon.Painter;
-    PD.Generator.Dungeon.Painter.prototype.setByLinearPosition=function(dungeonGenerator, cell, val){
-        
-    }
 
     PD.Generator.Dungeon.Painter.prototype.setByCoord=function(dungeonGenerator, x, y, val){
         dungeonGenerator.setTileId(x, y, val);
@@ -35,8 +32,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Painter.prototype.fillByRect=function(dungeonGenerator, rect, val){
         this.fill(dungeonGenerator, rect.left, rect.top, rect.width() + 1, rect.height() + 1, val);
     }
-    PD.Generator.Dungeon.Painter.prototype.fillByRectOff=function(dungeonGenerator, rect, m, val){
-        this.fill(dungeonGenerator, rect.left+m, rect.top+m, rect.width() + 1 -m*2, rect.height() + 1-m*2, val);
+    PD.Generator.Dungeon.Painter.prototype.fillByRectWithOffset=function(dungeonGenerator, rect, offset, val){
+        this.fill(dungeonGenerator, rect.left+offset, rect.top+offset, rect.width() + 1 -offset*2, rect.height() + 1-offset*2, val);
     }
     PD.Generator.Dungeon.Painter.prototype.drawInside=function(dungeonGenerator, room, pointFrom, n, val){
         var stepPoint=new PD.Generator.Dungeon.Point();
@@ -62,6 +59,6 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         return p;
     }
     PD.Generator.Dungeon.Painter.prototype.paint=function(dungeonGenerator, room){
-        console.log("You should override the paint method of this painter for it to function correctly!!");
+        console.warn("PD => "+foo.constructor.name+": You should override the paint method of this painter for it to do anything!!");
     }
 }

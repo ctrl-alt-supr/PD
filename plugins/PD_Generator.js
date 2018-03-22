@@ -119,9 +119,9 @@ PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
     if(!genOk){
         console.error("Couldn't create dungeon after 10 tryes");
     }
-    //this._postGenerate(".");
-    this.print();
 
+    this.print();
+    this._showStats();
 }
 PD.Generator.Dungeon.prototype._preGenerate=function(){
     this._tiles=[];
@@ -131,6 +131,29 @@ PD.Generator.Dungeon.prototype._preGenerate=function(){
         for (var x = 0; x < this._width; x++) {
             this._tiles[y][x]=voidTile;
         }
+    }
+}
+PD.Generator.Dungeon.prototype._showStats=function(){
+    var specialRooms=[PD.Generator.Dungeon.Room.Type.ENTRANCE,
+                      PD.Generator.Dungeon.Room.Type.EXIT, 
+                      PD.Generator.Dungeon.Room.Type.ARMORY, 
+                      PD.Generator.Dungeon.Room.Type.WEAK_FLOOR, 
+                      PD.Generator.Dungeon.Room.Type.MAGIC_WELL, 
+                      PD.Generator.Dungeon.Room.Type.CRYPT, 
+                      PD.Generator.Dungeon.Room.Type.POOL, 
+                      PD.Generator.Dungeon.Room.Type.GARDEN, 
+                      PD.Generator.Dungeon.Room.Type.LIBRARY,
+                      PD.Generator.Dungeon.Room.Type.TREASURY, 
+                      PD.Generator.Dungeon.Room.Type.TRAPS, 
+                      PD.Generator.Dungeon.Room.Type.STORAGE, 
+                      PD.Generator.Dungeon.Room.Type.STATUE, 
+                      PD.Generator.Dungeon.Room.Type.LABORATORY, 
+                      PD.Generator.Dungeon.Room.Type.VAULT, 
+                      PD.Generator.Dungeon.Room.Type.ALTAR];
+    var generatedSpecialRooms=this.connectedsByType(specialRooms);
+    for (var i = 0; i < generatedSpecialRooms.length; i++) {
+        var rm=generatedSpecialRooms[i];
+        console.log(rm.type()+" "+PD.Generator.Dungeon.Room.Type.getName(rm.type()));
     }
 }
 PD.Generator.Dungeon.prototype.reset=function(){
@@ -433,7 +456,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
     for (var index = 0; index < this._rooms.length; index++) {
         var room = this._rooms[index];
         if(room.type()==null && room.connected.length==1){
-            if(this._specials.length>0 && room.width()>3 && room.height>3   &&  PD.Helpers.randomInteger(specialRooms*specialRooms+1)==0){
+            if(this._specials.length>0 && room.width()>3 && room.height()>3 &&  PD.Helpers.randomInteger(specialRooms*specialRooms+1)==0){
                 if(this._depth%5==2 && this._specials.indexOf(PD.Generator.Dungeon.Room.Type.LABORATORY)>-1){
                     room.type(PD.Generator.Dungeon.Room.Type.LABORATORY);
                 }else{
@@ -489,4 +512,17 @@ PD.Generator.Dungeon.prototype.randomRoom=function(type, tryes) {
         }        
     }
     return null;
+}
+PD.Generator.Dungeon.prototype.connectedsByType=function(types) {
+    if(types==undefined){
+        return this._connected;
+    }
+    var res=[];
+    for (let index = 0; index < this._connected.length; index++) {
+        var room=this._connected[index];
+        if(types.indexOf(room.type())>-1){
+            res.push(room);
+        }        
+    }
+    return res;
 }

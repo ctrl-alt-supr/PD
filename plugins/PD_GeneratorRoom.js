@@ -5,7 +5,7 @@
  * @help Place AFTER PD_GeneratorRect!!!
  * */
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
-    console.error("PD_GeneratorRoom is meant to be imported AFTER PD_Generator!");
+    console.error("PD => PD_GeneratorRoom is meant to be imported AFTER PD_Generator!");
 } else{
     /**
      * @class A room
@@ -99,6 +99,16 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 		WEAK_FLOOR	: 21,
 		PIT			: 22,
 		ALTAR		: 23
+    }
+    PD.Generator.Dungeon.Room.Type.getName=function(typeToGet){
+        for (var property in PD.Generator.Dungeon.Room.Type) {
+            if (PD.Generator.Dungeon.Room.Type.hasOwnProperty(property)) {
+                if(PD.Generator.Dungeon.Room.Type[property]==typeToGet){
+                    return property;
+                }
+            }
+        }
+        return null;
     }
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){

@@ -5,7 +5,7 @@
  * @help Place AFTER PD_Generator!!!
  * */
 if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
-    console.error("PD_GeneratorRect is meant to be imported AFTER PD_Generator!");
+    console.error("PD => PD_GeneratorRect is meant to be imported AFTER PD_Generator!");
 } else{
     /**
      * @class A rect
