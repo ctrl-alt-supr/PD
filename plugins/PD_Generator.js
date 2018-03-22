@@ -100,11 +100,11 @@ try{
 var PD=PD || {};
 PD.Generator=PD.Generator||{};
 
-PD.Generator.Dungeon=function(depthLevel){
-    PD.Generator.Dungeon.prototype.initialize.call(this, depthLevel);
+PD.Generator.Dungeon=function(levelObject){
+    PD.Generator.Dungeon.prototype.initialize.call(this, levelObject);
 };
-PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
-    this._depth=depthLevel;
+PD.Generator.Dungeon.prototype.initialize=function(levelObject){
+    this._depth=levelObject._depth;
     this._height=$gameMap.height();
     this._width=$gameMap.width();
     this._minRoomSize=7;
@@ -122,6 +122,9 @@ PD.Generator.Dungeon.prototype.initialize=function(depthLevel){
 
     this.print();
     this._showStats();
+}
+PD.Generator.Dungeon.prototype.map=function(){
+    return this._tiles;
 }
 PD.Generator.Dungeon.prototype._preGenerate=function(){
     this._tiles=[];

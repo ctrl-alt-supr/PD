@@ -12,6 +12,18 @@ PD.Tiles={};
 PD.Tiles.name2id=function(name){
     return PD.Tiles.name2data(name).tileId;
 }
+PD.Tiles.id2name=function(name){
+    return PD.Tiles.name2data(name).tileId;
+}
+PD.Tiles.id2data=function(id){
+    var list = PD.Tiles.data.filter(function(each){
+        return each.tileId==id;
+    });
+    if(list.length>0){
+        return list[0];
+    }
+    return null;
+}
 PD.Tiles.name2data=function(name){
     var list = PD.Tiles.data.filter(function(each){
         return each.tileInternalName==name;
@@ -20,6 +32,94 @@ PD.Tiles.name2data=function(name){
         return list[0];
     }
     return null;
+}
+//Passability
+PD.Tiles.tile_Through=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    return foundData.through;
+}
+PD.Tiles.tileName_Through=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    return foundData.through;
+}
+//Occlusion
+PD.Tiles.tile_Occludes=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    return foundData.occluder;
+}
+PD.Tiles.tileName_Occludes=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    return foundData.occluder;
+}
+//Display name
+PD.Tiles.tile_DisplayName=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return "";
+    return foundData.name;
+}
+PD.Tiles.tileName_DisplayName=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return "";
+    return foundData.name;
+}
+//Display description
+PD.Tiles.tile_Description=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return "";
+    return foundData.description;
+}
+PD.Tiles.tileName_Description=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return "";
+    return foundData.description;
+}
+//Flamable
+PD.Tiles.tile_Flamable=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    return foundData.flamable;
+}
+PD.Tiles.tileName_Flamable=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    return foundData.flamable;
+}
+//Liquid
+PD.Tiles.tile_Liquid=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    return foundData.liquid;
+}
+PD.Tiles.tileName_Liquid=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    return foundData.liquid;
+}
+//Hidden
+PD.Tiles.tile_Hidden=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    return foundData.hidden;
+}
+PD.Tiles.tileName_Hidden=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    return foundData.hidden;
+}
+//Avoid (Tiles that warn the player before moving over them)
+PD.Tiles.tile_Avoid=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    return foundData.avoid;
+}
+PD.Tiles.tileName_Avoid=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    return foundData.avoid;
 }
 PD.Tiles.data=[
     {

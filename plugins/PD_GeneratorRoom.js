@@ -73,7 +73,11 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Door.prototype = Object.create(PD.Generator.Dungeon.Point.prototype);
     PD.Generator.Dungeon.Door.prototype.constructor = PD.Generator.Dungeon.Door;
 
-
+    /**
+     * @enum {number} 
+     * @readonly
+     * @description Enum for room types
+     */
     PD.Generator.Dungeon.Room.Type={
         STANDARD	: 0,
 		ENTRANCE	: 1,
