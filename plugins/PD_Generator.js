@@ -139,6 +139,7 @@ PD.Generator.Dungeon.prototype._preGenerate=function(){
 PD.Generator.Dungeon.prototype._showStats=function(){
     var specialRooms=[PD.Generator.Dungeon.Room.Type.ENTRANCE,
                       PD.Generator.Dungeon.Room.Type.EXIT, 
+                      PD.Generator.Dungeon.Room.Type.SHOP,
                       PD.Generator.Dungeon.Room.Type.ARMORY, 
                       PD.Generator.Dungeon.Room.Type.WEAK_FLOOR, 
                       PD.Generator.Dungeon.Room.Type.MAGIC_WELL, 
@@ -151,7 +152,7 @@ PD.Generator.Dungeon.prototype._showStats=function(){
                       PD.Generator.Dungeon.Room.Type.STORAGE, 
                       PD.Generator.Dungeon.Room.Type.STATUE, 
                       PD.Generator.Dungeon.Room.Type.LABORATORY, 
-                      PD.Generator.Dungeon.Room.Type.VAULT, 
+                      PD.Generator.Dungeon.Room.Type.VAULT,
                       PD.Generator.Dungeon.Room.Type.ALTAR];
     var generatedSpecialRooms=this.connectedsByType(specialRooms);
     for (var i = 0; i < generatedSpecialRooms.length; i++) {
@@ -353,15 +354,20 @@ PD.Generator.Dungeon.prototype._postGenerate=function(char){
         }
     }
 }
-PD.Generator.Dungeon.prototype.print=function(){
+PD.Generator.Dungeon.prototype.print=function(doNotUseSymbols){
     var res="";
     for (var y = 0; y < this._height; y++) {
         for (var x = 0; x < this._width; x++) {
-            res+=this._tiles[y][x];
+            var tileToPaint=this._tiles[y][x];
+            if(doNotUseSymbols==undefined || doNotUseSymbols==false){
+                var ds=String.fromCodePoint(PD.Tiles.tile_DebugSymbol(tileToPaint));
+                if(ds!=null)tileToPaint=ds;
+            }
+            res+=tileToPaint;
         }
         res+="\n";
     }
-    console.log(res);
+    console.log("%c"+res, "font-family: serif, sans-serif; line-height: 15px; font-size:15px");
 }
 PD.Generator.Dungeon.prototype.getTileId=function(x, y){
     if (x < 0 || y < 0 || x >= this._width || y >= this._height){

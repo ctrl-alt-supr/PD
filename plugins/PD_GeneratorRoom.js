@@ -61,6 +61,14 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 			this.connected.push( {room:otherRoom, door:null} );
 			otherRoom.connected.push( {room:this, door:null} );			
 		}
+    }
+    PD.Generator.Dungeon.Room.prototype.random=function( offset ) {
+        if(offset==undefined || offset==null){
+            offset=0;
+        }
+        var x=PD.Helpers.randomInteger(this.left + 1 + offset, this.right -1 - offset);
+        var y=PD.Helpers.randomInteger(this.top + 1 + offset, this.bottom -1 - offset);
+        return new PD.Generator.Dungeon.Point(x, y);
 	}
     /**
      * @class A door
@@ -115,8 +123,15 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         return null;
     }
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
+        
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
             return  new PD.Generator.Dungeon.Painters.Tunnel();
+        }
+        if(typeToGet==PD.Generator.Dungeon.Room.Type.ENTRANCE){
+            return  new PD.Generator.Dungeon.Painters.Entrance();
+        }
+        if(typeToGet==PD.Generator.Dungeon.Room.Type.EXIT){
+            return  new PD.Generator.Dungeon.Painters.Exit();
         }
         // }else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
         //     return  PD.Generator.Dungeon.Painters.SimplePassage;

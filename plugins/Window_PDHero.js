@@ -2,7 +2,7 @@
 // Window_SDHero.js
 //=============================================================================
 /*:
- * @plugindesc The Choose Heo screen.
+ * @plugindesc The Choose Hero screen.
  * @author Alex
  *
  * @help Sin comandos de plugin.

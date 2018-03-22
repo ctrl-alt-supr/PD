@@ -33,6 +33,21 @@ PD.Tiles.name2data=function(name){
     }
     return null;
 }
+//DebugSymbol
+PD.Tiles.tile_DebugSymbol=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return false;
+    var toRet=null;
+    if(foundData.debugSymbol!=undefined && foundData.debugSymbol!=null) toRet=foundData.debugSymbol;
+    return toRet;
+}
+PD.Tiles.tileName_Through=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return false;
+    var toRet=null;
+    if(foundData.debugSymbol!=undefined && foundData.debugSymbol!=null) toRet=foundData.debugSymbol;
+    return toRet;
+}
 //Passability
 PD.Tiles.tile_Through=function(id){
     var foundData=PD.Tiles.id2data(id);
@@ -125,6 +140,7 @@ PD.Tiles.data=[
     {
         "tileId":0,
         "tileInternalName":"VOID",
+        "debugSymbol":0x25A9,
         "tilesetLayer":3,
         "tilesetTileId":0,
         "name":"Void",
@@ -140,6 +156,7 @@ PD.Tiles.data=[
     {
         "tileId":1,
         "tileInternalName":"ROOMFLOOR",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":0,
         "name":"Floor",
@@ -170,6 +187,7 @@ PD.Tiles.data=[
     {
         "tileId":3,
         "tileInternalName":"WALL",
+        "debugSymbol":0x25EB,
         "tilesetLayer":3, 
         "tilesetTileId":0,
         "name":"Wall",
@@ -185,6 +203,7 @@ PD.Tiles.data=[
     {
         "tileId":4,
         "tileInternalName":"CLOSEDDOOR",
+        "debugSymbol":0x25EA,
         "tilesetLayer":3, 
         "tilesetTileId":0,
         "name":"Closed door",
@@ -440,6 +459,7 @@ PD.Tiles.data=[
     {
         "tileId":21,
         "tileInternalName":"UPSTAIRS",
+        "debugSymbol":0x25B2,
         "tilesetLayer":3, 
         "tilesetTileId":0,
         "name":"Depth entrance",
@@ -455,6 +475,7 @@ PD.Tiles.data=[
     {
         "tileId":22,
         "tileInternalName":"DOWNSTAIRS",
+        "debugSymbol":0x25BC,
         "tilesetLayer":3, 
         "tilesetTileId":0,
         "name":"Depth exit",
