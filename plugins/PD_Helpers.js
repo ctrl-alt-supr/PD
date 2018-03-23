@@ -93,3 +93,15 @@ PD.Helpers.transposeArray=function(a){
         return a.map(function(r) { return r[c]; });
     });
 }
+
+PD.Helpers.paintGrid=function(tGrid, h, w){
+    var res="";
+    for (var y = 0; y < h; y++) {
+        for (var x = 0; x < h; x++) {
+            var tileToPaint=tGrid[y][x];
+            res+=tileToPaint;
+        }
+        res+="\n"; 
+    }
+    console.log("%c"+res, "font-family: serif, sans-serif; line-height: 15px; font-size:15px");
+}

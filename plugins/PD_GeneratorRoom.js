@@ -52,8 +52,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     }
     PD.Generator.Dungeon.Room.prototype.center=function() {
 		return new PD.Generator.Dungeon.Point( 
-			Math.round((this.left + this.right) / 2 + (((this.right - this.left) & 1) == 1 ? PD.Helpers.randomInteger( 1 ) : 0)),
-            Math.round((this.top + this.bottom) / 2 + (((this.bottom - this.top) & 1) == 1 ? PD.Helpers.randomInteger( 1 ) : 0)) 
+			Math.floor((this.left + this.right) / 2 + (((this.right - this.left) & 1) == 1 ? PD.Helpers.randomInteger( 1 ) : 0)),
+            Math.floor((this.top + this.bottom) / 2 + (((this.bottom - this.top) & 1) == 1 ? PD.Helpers.randomInteger( 1 ) : 0)) 
         );
 	}
     PD.Generator.Dungeon.Room.prototype.connect=function( otherRoom ) {
@@ -125,7 +125,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
         
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
-            return  new PD.Generator.Dungeon.Painters.NTunnel();
+            return  new PD.Generator.Dungeon.Painters.Tunnel();
         }
         if(typeToGet==PD.Generator.Dungeon.Room.Type.ENTRANCE){
             return  new PD.Generator.Dungeon.Painters.Entrance();

@@ -265,8 +265,8 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
 }
 PD.Generator.Dungeon.prototype.paint=function(){
     var voidTile=PD.Tiles.name2id("VOID");
-    for (var roomIndex = 0; roomIndex < this._rooms.length; roomIndex++) {
-        var room = this._rooms[roomIndex];
+    for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
+        var room = this._connected[roomIndex];
         if(room.type()!=null){
             this.placeDoors(room);
             var typePainter=PD.Generator.Dungeon.Room.Type.getPainter(room.type());
@@ -301,10 +301,11 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
         if(door==null){
             console.log("Placing unexisting door ("+index+") for "+room.GUID+" and "+neig.GUID);
             var rct=room.intersect(neig);
+            var ndoor=null;
             if(rct.width()==0){
-                ndoor=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-1));
+                ndoor=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-2));
             }else{
-                ndoor=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-1), rct.top);
+                ndoor=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-2), rct.top);
             }
             room.connected[index]={room:neig, door:ndoor};
             var roomIndexOfRoom=neig.connected.map(function(e) { return e.room.GUID; }).indexOf(room.GUID);
@@ -388,7 +389,7 @@ PD.Generator.Dungeon.prototype._postGenerate=function(char){
 PD.Generator.Dungeon.prototype.print=function(doNotUseSymbols){
     var res="";
     var roomCenters=[];
-    var rIdentifierNames=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+    var rIdentifierNames=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z","1","2","3","4","5","6","7","8","9"];
     for (var i = 0; i < this._connected.length; i++) {
         var element = this._connected[i];
         roomCenters.push(element.center());
@@ -398,12 +399,13 @@ PD.Generator.Dungeon.prototype.print=function(doNotUseSymbols){
             var tileToPaint=this._tiles[y][x];
             if(doNotUseSymbols==undefined || doNotUseSymbols==false){
                 var ds=String.fromCodePoint(PD.Tiles.tile_DebugSymbol(tileToPaint));
-                var centerIndex=roomCenters.map(function(e){return e.x+","+e.y}).indexOf(x+","+y);
-                if(centerIndex>-1){
-                    if(ds!=null)tileToPaint=rIdentifierNames[centerIndex];
-                }else{
+                //var centerIndex=roomCenters.map(function(e){return e.x+","+e.y}).indexOf(x+","+y);
+                //if(centerIndex>-1){
+                //    tileToPaint=rIdentifierNames.length>centerIndex?rIdentifierNames[centerIndex]:"X";
+                    //tileToPaint=rIdentifierNames[centerIndex];
+                //}else{
                     if(ds!=null)tileToPaint=ds;
-                }
+                //}
                 
             }
             res+=tileToPaint;

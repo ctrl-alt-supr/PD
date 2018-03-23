@@ -22,6 +22,7 @@ var $plugins =
 {"name":"PD_Painter_Simple","status":true,"description":"","parameters":{}},
 {"name":"PD_Painter_NewTunnel","status":true,"description":"","parameters":{}},
 {"name":"PD_Painter_Tunnel","status":true,"description":"","parameters":{}},
+{"name":"PD_Painter_STunnel","status":true,"description":"","parameters":{}},
 {"name":"======UI=================================================","status":false,"description":"","parameters":{}},
 {"name":"Window_PDTitle","status":true,"description":"The Title screen.","parameters":{}},
 {"name":"Window_PDOptions","status":true,"description":"The Options screen.","parameters":{}},
