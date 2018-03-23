@@ -159,7 +159,9 @@ PD.Generator.Dungeon.prototype.reset=function(){
     this._tiles=[];
     this._connected=[];
     this._entranceRoom=null;
+    this._entrancePoint=null;
     this._exitRoom=null;
+    this._exitPoint=null;
     this._shopRoom=null;
     this._specials=[
         PD.Generator.Dungeon.Room.Type.ARMORY, 
@@ -303,9 +305,9 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
             var rct=room.intersect(neig);
             var ndoor=null;
             if(rct.width()==0){
-                ndoor=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-2));
+                ndoor=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-1));
             }else{
-                ndoor=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-2), rct.top);
+                ndoor=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-1), rct.top);
             }
             room.connected[index]={room:neig, door:ndoor};
             var roomIndexOfRoom=neig.connected.map(function(e) { return e.room.GUID; }).indexOf(room.GUID);
@@ -657,6 +659,8 @@ if(isInMV && PluginManager!=undefined){
             if(this.createPathfinder!=undefined){
                 this._pathFindingFinder=new PF.AStarFinder();
             }
+            
+            $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._entrancePoint.x, this._dungeonGenerator._entrancePoint.y, $gamePlayer.direction(), 2);
         }
     }
 

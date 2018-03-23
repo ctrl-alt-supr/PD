@@ -13,5 +13,6 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         var stairsTile=PD.Tiles.name2id("DOWNSTAIRS");
         var stairsPos=room.random(1);
         this.setByPoint(dungeonGenerator, stairsPos, stairsTile);
+        dungeonGenerator._exitPoint=stairsPos;
     }
 }

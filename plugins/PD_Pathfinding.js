@@ -31,16 +31,20 @@ Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
     if(!$gameMap.hasGeneratedDungeon() || !this.canPass(this._x, this._y)){
         return PD.Aliases.Game_Map.findDirectionTo.call(this, goalX, goalY);
     }
-    $gameMap.createPathfinder(this);
-    var path = $gameMap._pathFindingFinder.findPath(this._x, this._y, goalX, goalY, $gameMap._pathFindingGrid.clone());
-    if(path.length>1){
-        var deltaX2 = this.deltaXFrom(path[1][0]);
-        var deltaY2 = this.deltaYFrom(path[1][1]);
-        if (Math.abs(deltaX2) > Math.abs(deltaY2)) {
-            return deltaX2 > 0 ? 4 : 6;
-        } else if (deltaY2 !== 0) {
-            return deltaY2 > 0 ? 8 : 2;
+    try{
+        $gameMap.createPathfinder(this);
+        var path = $gameMap._pathFindingFinder.findPath(this._x, this._y, goalX, goalY, $gameMap._pathFindingGrid.clone());
+        if(path.length>1){
+            var deltaX2 = this.deltaXFrom(path[1][0]);
+            var deltaY2 = this.deltaYFrom(path[1][1]);
+            if (Math.abs(deltaX2) > Math.abs(deltaY2)) {
+                return deltaX2 > 0 ? 4 : 6;
+            } else if (deltaY2 !== 0) {
+                return deltaY2 > 0 ? 8 : 2;
+            }
         }
+    }catch(err){
+        console.warn(err);
     }
     return 0;
 };
