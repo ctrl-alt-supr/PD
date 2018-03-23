@@ -76,7 +76,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
      */
     PD.Generator.Dungeon.Door=function(x, y){
         PD.Generator.Dungeon.Point.prototype.constructor.call(this, x, y);
-
+        this.GUID=Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)+Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
     }
     PD.Generator.Dungeon.Door.prototype = Object.create(PD.Generator.Dungeon.Point.prototype);
     PD.Generator.Dungeon.Door.prototype.constructor = PD.Generator.Dungeon.Door;
@@ -125,7 +125,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Room.Type.getPainter=function(typeToGet){
         
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
-            return  new PD.Generator.Dungeon.Painters.Tunnel();
+            return  new PD.Generator.Dungeon.Painters.NTunnel();
         }
         if(typeToGet==PD.Generator.Dungeon.Room.Type.ENTRANCE){
             return  new PD.Generator.Dungeon.Painters.Entrance();

@@ -61,6 +61,7 @@ Scene_Credits.prototype.createTextSprite=function(){
     "",
     "Graphics: Watabou",
     "Music: Cube_Code",
+    "FOW base code: CityShrimp",
     "Field of view: Dominik Marczuk",
     "Pathfinding: Xueqiao Xu"];
     for (var textIndex = 0; textIndex < texts.length; textIndex++) {

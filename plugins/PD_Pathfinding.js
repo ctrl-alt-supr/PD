@@ -14,14 +14,6 @@
 
 
 
-
-var tmpAliasGameMapSetup=Game_Map.prototype.setup;
-Game_Map.prototype.setup=function(mapId){
-    tmpAliasGameMapSetup.call(this, mapId);
-    if(this.hasGeneratedDungeon()){
-        this._pathFindingFinder=new PF.AStarFinder();
-    }
-}
 Game_Map.prototype.createPathfinder=function(character){
     var walkableMatrix=[];
     for (var y =0;y < this.height();y++) {

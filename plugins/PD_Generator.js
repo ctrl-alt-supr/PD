@@ -88,13 +88,6 @@ var generateTestGameMap=function(){
         return 30;
     }
 }
-try{
-    if($gameMap==undefined){
-        generateTestGameMap();
-    }
-}catch(err){
-    generateTestGameMap();
-}
 
 
 var PD=PD || {};
@@ -128,11 +121,12 @@ PD.Generator.Dungeon.prototype.map=function(){
 }
 PD.Generator.Dungeon.prototype._preGenerate=function(){
     this._tiles=[];
-    var voidTile=PD.Tiles.name2id("VOID");
+    var genTile=PD.Tiles.name2id("WALL");//("VOID");
+    
     for (var y = 0; y < this._height; y++) {
         this._tiles[y]=[];
         for (var x = 0; x < this._width; x++) {
-            this._tiles[y][x]=voidTile;
+            this._tiles[y][x]=genTile;
         }
     }
 }
@@ -264,6 +258,7 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
     }
 
     this.assignRoomTypes();
+    this.placeAllDoors();
     this.paint();
 
     return true;
@@ -275,6 +270,10 @@ PD.Generator.Dungeon.prototype.paint=function(){
         var room = this._rooms[roomIndex];
         if(room.type()!=null){
             this.placeDoors(room);
+            for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
+                var room = this._connected[roomIndex];
+                this.paintDoors(room);
+            }
             var typePainter=PD.Generator.Dungeon.Room.Type.getPainter(room.type());
             if(typePainter!=undefined && typePainter!=null){
                 typePainter.paint(this, room);
@@ -283,11 +282,17 @@ PD.Generator.Dungeon.prototype.paint=function(){
             }
         }
     }
-    for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
-        var room = this._connected[roomIndex];
-        this.paintDoors(room);
+    
+}
+PD.Generator.Dungeon.prototype.placeAllDoors=function() {
+    for (var index = 0; index < this._connected.length; index++) {
+        var r=this._connected[index];
+        this.placeDoors(r);
     }
 }
+///////////////////////////////////////////////
+/////  TODOTODOTODOTODO  /// Las asignaciones de las puertas a Generator._connected no esta funcionando como es debido, ya que el valor es nulo en algun momento
+///////////////////////////////////////////////
 PD.Generator.Dungeon.prototype.placeDoors=function(room) {
     for (var index = 0; index < room.connected.length; index++) {
         var neig=room.connected[index].room;
@@ -299,12 +304,16 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
             }else{
                 door=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-1), rct.top);
             }
-            var indOfNeig=(room.connected.map(function(e) { return e.room.GUID; }).indexOf(neig.GUID));
-            var indOfRoom=(neig.connected.map(function(e) { return e.room.GUID; }).indexOf(room.GUID));
+            
+            var indOfNeig=(room.connected.filter(function(e) { return e.door==null; }).map(function(e) { return e.room.GUID; }).indexOf(neig.GUID));
+            var indOfRoom=(neig.connected.filter(function(e) { return e.door==null; }).map(function(e) { return e.room.GUID; }).indexOf(room.GUID));
             if(indOfNeig>-1){
                 room.connected[indOfNeig]={room:neig, door:door};
             }else{
                 room.connected.push({room:neig, door:door});
+                if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(neig.GUID)>-1)){
+                    this._connected.push(neig);
+                }
             }
             if(indOfRoom>-1){
                 neig.connected[indOfRoom]={room:room, door:door};
@@ -462,8 +471,8 @@ PD.Generator.Dungeon.prototype.setPrice=function(listToSet, priceValue ) {
 PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
     var specialRooms=0;
 
-    for (var index = 0; index < this._rooms.length; index++) {
-        var room = this._rooms[index];
+    for (var index = 0; index < this._connected.length; index++) {
+        var room = this._connected[index];
         if(room.type()==null && room.connected.length==1){
             if(this._specials.length>0 && room.width()>3 && room.height()>3 &&  PD.Helpers.randomInteger(specialRooms*specialRooms+1)==0){
                 if(this._depth%5==2 && this._specials.indexOf(PD.Generator.Dungeon.Room.Type.LABORATORY)>-1){
@@ -485,7 +494,11 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
                     }
                 }
                 if(neigs.length>1){
-                    room.connect(PD.Helpers.randomFrom(neigs));
+                    var rndRoom=PD.Helpers.randomFrom(neigs);
+                    room.connect(rndRoom);
+                    if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(rndRoom.GUID)>-1)){
+                        this._connected.push(rndRoom);
+                    }
                 }
             }
         }
@@ -514,7 +527,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
     }
 }
 PD.Generator.Dungeon.prototype.randomRoom=function(type, tryes) {
-    for (let cTry = 0; cTry < tryes; cTry++) {
+    for (var cTry = 0; cTry < tryes; cTry++) {
         var room=PD.Helpers.randomFrom(this._rooms);
         if(room.type()==type){
             return room;
@@ -527,11 +540,337 @@ PD.Generator.Dungeon.prototype.connectedsByType=function(types) {
         return this._connected;
     }
     var res=[];
-    for (let index = 0; index < this._connected.length; index++) {
+    for (var index = 0; index < this._connected.length; index++) {
         var room=this._connected[index];
         if(types.indexOf(room.type())>-1){
             res.push(room);
         }        
     }
     return res;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+var isInMV=true;
+
+try{
+    if(PluginManager==undefined){
+        generateTestGameMap();
+        isInMV=false;
+    }
+}catch(err){
+    generateTestGameMap();
+    isInMV=false;
+}
+
+
+/**
+ * MV only code starts here!!!
+ */
+if(isInMV && PluginManager!=undefined){
+    var pars=PluginManager.parameters('PD_Generator');
+    PD.Generator.Parameters={};
+    PD.Generator.Parameters.defaultTileMappings = JSON.parse(pars["defaultTileMappings"] || "[]")
+    for (var index = 0; index < PD.Generator.Parameters.defaultTileMappings.length; index++) {
+        var element = PD.Generator.Parameters.defaultTileMappings[index];
+        PD.Generator.Parameters.defaultTileMappings[index]=JSON.parse(element);
+        PD.Generator.Parameters.defaultTileMappings[index]["DungeonId"]=JSON.parse(PD.Generator.Parameters.defaultTileMappings[index]["DungeonId"]);
+        PD.Generator.Parameters.defaultTileMappings[index]["RpgmId"]=JSON.parse(PD.Generator.Parameters.defaultTileMappings[index]["RpgmId"]);
+    }
+    PD.Generator.Parameters.perTilesetTileMappings = JSON.parse(pars["perTilesetTileMappings"] || "[]")
+    for (var index = 0; index < PD.Generator.Parameters.perTilesetTileMappings.length; index++) {
+        var element = PD.Generator.Parameters.perTilesetTileMappings[index];
+        PD.Generator.Parameters.perTilesetTileMappings[index]=JSON.parse(element);
+        PD.Generator.Parameters.perTilesetTileMappings[index]["TilesetId"]=JSON.parse(PD.Generator.Parameters.perTilesetTileMappings[index]["TilesetId"]);
+        for (var index2 = 0; index < PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping.length; index2++) {
+            var element2 = PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2];
+            PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]=JSON.parse(element2);
+            PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["DungeonId"]=JSON.parse(PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["DungeonId"]);
+            PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["RpgmId"]=JSON.parse(PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["RpgmId"]);
+        }
+    }
+            
+
+
+    PD.Generator.Aliases=PD.Generator.Aliases||{};
+    PD.Generator.Aliases.Game_Map={};
+
+    PD.Generator.Aliases.Game_Map.initialize=Game_Map.prototype.initialize;
+    Game_Map.prototype.initialize=function(){
+        PD.Generator.Aliases.Game_Map.initialize.call(this);
+        this._hasGeneratedDungeon=false;
+        this._otherMapDatas=[];
+    }
+    PD.Generator.Aliases.Game_Map.setup=Game_Map.prototype.setup;
+    Game_Map.prototype.setup=function(mapId){
+        PD.Generator.Aliases.Game_Map.setup.call(this, mapId);
+        this._hasGeneratedDungeon=false;
+        this._dungeonOptions=null;
+        if(this.shouldGenerateDungeon()){
+            //this.parseCustomFeatures();
+            this.generateDungeon();
+            this._hasGeneratedDungeon=true;
+            if(this.createPathfinder!=undefined){
+                this._pathFindingFinder=new PF.AStarFinder();
+            }
+        }
+    }
+
+
+    Game_Map.prototype.shouldGenerateDungeon=function(){
+        if(this.parseDungeonNotetag($dataMap.note)!=null){
+            return true;
+        }
+        return false;
+    }
+
+    Game_Map.prototype.hasGeneratedDungeon=function(){
+        return this._hasGeneratedDungeon;
+    }
+
+    Game_Map.prototype.parseDungeonNotetag=function(eNote){
+        var toReturn=null;
+        var rgx=new RegExp("<\\s*dungeon\\s+([\\w\\s\\d='\":_\\.\\*\\+-\\{\\}]*)\\s*\\/?\\s*>", "ig");
+        var regexMatch = rgx.exec(eNote);
+        if(regexMatch){
+            var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
+            this._dungeonOptions={};
+            for(var propertyName in PD.Generator.Dungeon.Defaults) {
+                if(dp.documentElement.attributes[propertyName]!=null){
+                    if(propertyName=="wallHeight"){
+                        var splitVal=dp.documentElement.attributes[propertyName].value.split(",");
+                        this._dungeonOptions[propertyName]={2:Number(splitVal[0]), 4:Number(splitVal[1]), 6:Number(splitVal[2]), 8:Number(splitVal[3])};
+                    }else if(propertyName=="maxRooms"){
+                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                    }else if(propertyName=="maxCorridors"){
+                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                    }else if(propertyName=="roomChance"){
+                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                    }else if(propertyName=="customFeatureChance"){
+                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                    }else if(propertyName=="maxFeatures"){
+                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                    }else{
+                        this._dungeonOptions[propertyName]=dp.documentElement.attributes[propertyName].value;
+                    }
+                }else{
+                    this._dungeonOptions[propertyName]=PD.Generator.Dungeon.Defaults[propertyName];
+                }
+            }
+            toReturn= this._dungeonOptions;//Object.assign(defOpts, temporalAttrs);
+        }
+        return toReturn;
+    }
+
+    Game_Map.prototype.generateDungeon=function(){
+        //var lasOpts=Object.assign(this._dungeonOptions, {width:$gameMap.width(), height:$gameMap.height()});
+        //this._dungeonGenerator=new PD.Generator.Dungeon(lasOpts);
+        this._dungeonLevel=PD.Dungeon.prepareDepthLevel(1);
+        this._dungeonGenerator=this._dungeonLevel.generator();
+        //this._dungeonGenerator.generate();
+        this._hasGeneratedDungeon=true;
+    }
+    Game_Map.prototype.getGeneratedData=function (x, y, z) {
+        var width = $dataMap.width;
+        var height = $dataMap.height;
+        //Z ES LA CAPA EN EL EDITOR!!!!! JODEEEEEER!!!
+        if(z==2){
+            //var tmpData=PD.Generator.Helpers.rotateMapToLeft(this._dungeonGenerator._tiles);
+            return this.getMappedTile(this._dungeonGenerator.getTileId(x,y));
+        }else{
+            return $dataMap.data[(z * height + y) * width + x] || 0;
+        }
+    }
+
+    Game_Map.prototype.getMappedTile=function (generatedTileId) {
+        return PD.Tiles.tile_TilesetTileId(generatedTileId);
+    }
+    Game_Map.prototype.getMappedTileInverse=function (mvTileId, layer) {
+        var found=PD.Generator.Parameters.defaultTileMappings.filter(function(gt){
+            return gt.RpgmId==mvTileId;
+        });
+        return found.length>0?found[0].DungeonId:0;
+    }
+    PD.Generator.Aliases.Game_Map.isPassable=Game_Map.prototype.isPassable;
+    Game_Map.prototype.isPassable = function(x, y, d) {
+        if(this.hasGeneratedDungeon()){
+            var tId=this._dungeonGenerator.getTileId(x, y);
+            return tId!=3; //&& tId!=4;
+        }else{
+            return PD.Generator.Aliases.Game_Map.isPassable.call(this, x, y, d);
+        }
+    };
+    PD.Generator.Aliases.Game_Map.data=Game_Map.prototype.data;
+    Game_Map.prototype.data=function(){
+        if(this.hasGeneratedDungeon()){
+            var len=PD.Generator.Aliases.Game_Map.data.call(this).length;
+            var theData=[];
+            var width = $dataMap.width;
+            var height = $dataMap.height;
+            for (var z = 0; z < 6; z++) {
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        theData.push(this.getGeneratedData(x,y,z));
+                    }
+                }
+            }
+            
+            return theData;
+        }else{
+            return PD.Generator.Aliases.Game_Map.data.call(this);
+        }
+    }
+    //Gets a lists with the ids of the maps that are parented to this one in the RPGMaker MV map editor
+    Game_Map.prototype.getChildMapIds=function () {
+        return DataManager.getChildMapIds(this.mapId());
+    }
+    DataManager.getChildMapIds=function(parentId){
+        return $dataMapInfos.filter(function(dmi){return dmi!=null && dmi.parentId==parentId}).map(function(dmi){return dmi.id});
+    }
+    Scene_Load.prototype.onLoadSuccess = function() {
+        SoundManager.playLoad();
+        this.fadeOutAll();
+        if($gameMap.hasGeneratedDungeon()){
+            DataManager.onDungeonMapLoaded();
+        }
+        this.reloadMapIfUpdated();
+        SceneManager.goto(Scene_Map);
+        this._loadSuccess = true;
+    };
+    DataManager.onDungeonMapLoaded=function(){
+        var originalDungeonData=$gameMap._dungeonGenerator;
+        var tmpGen=new PD.Generator.Dungeon();
+        var newGen = Object.assign(tmpGen, originalDungeonData);
+        $gameMap._dungeonGenerator=newGen;
+    }
+    //Loads each map data to a different global variable to keep the original $dataMap as is cause we still need it
+    DataManager.loadOtherMapData = function(mapId, outVarName) {
+        if (mapId > 0) {
+            this._loadingMaps.push(mapId);
+            var filename = 'Map%1.json'.format(mapId.padZero(3));
+            this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap_'+mapId, filename));
+            this.loadDataFile('$dataMap_'+mapId, filename);
+        } 
+    };
+    DataManager.loadMapData = function(mapId) {
+        this._loadingMaps=[];
+        if (mapId > 0) {
+            var filename = 'Map%1.json'.format(mapId.padZero(3));
+            this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap', filename));
+            this.loadDataFile('$dataMap', filename);
+            //We also load all child maps datas
+            var childMapIds=this.getChildMapIds(mapId);
+            for (var childIndex = 0; childIndex < childMapIds.length; childIndex++) {
+                var cmapId = childMapIds[childIndex];
+                if(window["$dataMap_"+cmapId]==undefined || window["$dataMap_"+cmapId]==null){
+                    DataManager.loadOtherMapData(cmapId);
+                }
+            }
+        } else {
+            this.makeEmptyMap();
+        }
+    };
+    DataManager.isMapLoaded = function() {
+        this.checkError();
+        var isAnyDataMissing=false;
+        isAnyDataMissing=!!!$dataMap;
+        for (var index = 0; index < this._loadingMaps.length; index++) {
+            var element = this._loadingMaps[index];
+            isAnyDataMissing=!!!window["$dataMap_"+element];
+        }
+        return !isAnyDataMissing;
+    };
+    //Takes care of the loading of all the data maps on initialization
+    Game_Map.prototype.loadChildMapDatas=function () {
+        var childMapIds=this.getChildMapIds();
+        for (var childIndex = 0; childIndex < childMapIds.length; childIndex++) {
+            var cmapId = childMapIds[childIndex];
+            if(window["$dataMap_"+cmapId]!=undefined && window["$dataMap_"+cmapId]!=null){
+                return window["$dataMap_"+cmapId];
+            }else{
+                DataManager.loadOtherMapData(cmapId);
+            }
+        }
+    }
+    Game_Map.prototype.getChildMapData=function (childId) {
+        return window["$dataMap_"+childId];
+    }
+    Game_Map.prototype.getChildMapDatas=function(){
+        var toRet=[];
+        // var childMapIds=this.getChildMapIds();
+        // for (var childIndex = 0; childIndex < childMapIds.length; childIndex++) {
+        //     var cmapId = childMapIds[childIndex];
+        //     toRet.push(this.getChildMapData(cmapId));
+        // }
+        return toRet;
+    }
+
+    Game_Map.prototype.parseFeatureNotetag=function(eNote){
+        var toReturn=null;
+        var rgx=new RegExp("<\\s*feature\\s+([\\w\\s\\d='\":_\\.\\*\\+-\\{\\}]*)\\s*\\/?\\s*>", "ig");
+        var regexMatch = rgx.exec(eNote);
+        if(regexMatch){
+            var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
+            var ftOpts={};
+            for(var propertyName in PD.Generator.CustomFeature.Defaults) {
+                if(dp.documentElement.attributes[propertyName]!=null){
+                    if(propertyName!="data"){
+                        if(propertyName!="name"){
+                            ftOpts[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                        }else{
+                            ftOpts[propertyName]=dp.documentElement.attributes[propertyName].value;
+                        }
+                        
+                    }
+                }else{
+                    ftOpts[propertyName]=PD.Generator.CustomFeature.Defaults[propertyName];
+                }
+            }
+            toReturn= ftOpts;//Object.assign(defOpts, temporalAttrs);
+        }
+        return toReturn;
+    }
+    Game_Map.prototype.mvDataToTileIdData=function(mvData, tilesetId, mapW, mapH){
+        var tileIdData=[];
+        for (var index = 0; index < 6; index++) {
+            if(index==3){
+                //var element = $dataMap.data.slice(index*($dataMap.height*$dataMap.width),index*($dataMap.height*$dataMap.width) + $dataMap.height*$dataMap.width)
+                var splitData=mvData.slice(index*(mapH*mapW),index*(mapH*mapW) + mapH*mapW);
+                for (var subindex = 0; subindex < splitData.length; subindex++) {
+                    var element = splitData[subindex];
+                    tileIdData.push($gameMap.getMappedTileInverse(element, 3));
+                }
+            }
+            
+        }
+        return tileIdData;
+    }
+    Game_Map.prototype.parseCustomFeatures=function(){
+        var cfs=[];
+        var cDatas=this.getChildMapDatas();
+        for (var index = 0; index < cDatas.length; index++) {
+            var cData = cDatas[index];
+            var laNote=cData.note;
+            var susFeatOpts=this.parseFeatureNotetag(laNote);
+            if(susFeatOpts!=undefined && susFeatOpts!=null){
+                var newFeat=new PD.Generator.CustomFeature(susFeatOpts);
+                if(this._dungeonOptions){
+                    newFeat.data=cData.data;
+                    newFeat.width=cData.width;
+                    newFeat.height=cData.height;
+                    this._dungeonOptions.customFeatures.push(newFeat);
+                }
+            }
+        }
+    }
 }

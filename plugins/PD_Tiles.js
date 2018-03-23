@@ -136,6 +136,17 @@ PD.Tiles.tileName_Avoid=function(name){
     if(foundData==null) return false;
     return foundData.avoid;
 }
+//Tileset tile id
+PD.Tiles.tile_TilesetTileId=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null) return 0;
+    return foundData.tilesetTileId;
+}
+PD.Tiles.tileName_TilesetTileId=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null) return 0;
+    return foundData.tilesetTileId;
+}
 PD.Tiles.data=[
     {
         "tileId":0,
@@ -158,7 +169,7 @@ PD.Tiles.data=[
         "tileInternalName":"ROOMFLOOR",
         "debugSymbol":0x25A4,
         "tilesetLayer":3, 
-        "tilesetTileId":0,
+        "tilesetTileId":1,
         "name":"Floor",
         "description":"",
         "through":true,
@@ -189,7 +200,7 @@ PD.Tiles.data=[
         "tileInternalName":"WALL",
         "debugSymbol":0x25EB,
         "tilesetLayer":3, 
-        "tilesetTileId":0,
+        "tilesetTileId":4,
         "name":"Wall",
         "description":"",
         "through":false,
@@ -205,7 +216,7 @@ PD.Tiles.data=[
         "tileInternalName":"CLOSEDDOOR",
         "debugSymbol":0x25EA,
         "tilesetLayer":3, 
-        "tilesetTileId":0,
+        "tilesetTileId":5,
         "name":"Closed door",
         "description":"",
         "through":true,
@@ -461,7 +472,7 @@ PD.Tiles.data=[
         "tileInternalName":"UPSTAIRS",
         "debugSymbol":0x25B2,
         "tilesetLayer":3, 
-        "tilesetTileId":0,
+        "tilesetTileId":7,
         "name":"Depth entrance",
         "description":"Stairs lead up to the upper depth.",
         "through":true,
@@ -477,7 +488,7 @@ PD.Tiles.data=[
         "tileInternalName":"DOWNSTAIRS",
         "debugSymbol":0x25BC,
         "tilesetLayer":3, 
-        "tilesetTileId":0,
+        "tilesetTileId":24,
         "name":"Depth exit",
         "description":"Stairs lead down to the lower depth.",
         "through":true,

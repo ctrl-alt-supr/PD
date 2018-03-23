@@ -174,7 +174,7 @@ PD.FOW.eraseFog = function() {
     }
 }
 PD.FOW.isOccluderTile=function(x, y){
-    return PD.FOW.Params.fogTileOcclusion.indexOf($gameMap._dungeonGenerator._getTileId(x, y))>-1;
+    return PD.FOW.Params.fogTileOcclusion.indexOf($gameMap._dungeonGenerator.getTileId(x, y))>-1;
 }
 PD.Helpers=PD.Helpers || {};
 PD.Helpers.getTilesInLine=function(origin, dest){
