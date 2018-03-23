@@ -205,7 +205,7 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
     this._exitRoom.type(PD.Generator.Dungeon.Room.Type.EXIT);
 
     this._connected=[];
-    this._connected.push(this._entranceRoom);
+    this.addToConnections(this._entranceRoom);
 
     var pathList = this.buildPath( this._rooms, this._entranceRoom, this._exitRoom );
     var room=this._entranceRoom;
@@ -213,9 +213,7 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
         var next = pathList[roomPathIndex];
         room.connect(next);
         room=next;
-        if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(room.GUID)>-1)){
-            this._connected.push(room);
-        }
+        this.addToConnections(room);
     }
 
     this.setPrice(pathList, this._entranceRoom.distance());
@@ -226,19 +224,19 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
         var next = pathList[roomPathIndex];
         room.connect(next);
         room=next;
-        if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(room.GUID)>-1)){
-            this._connected.push(room);
-        }
+        this.addToConnections(room);
     }
 
     var nConnected = (this._rooms.length * (PD.Helpers.randomInteger(50,70)/100));
     while(this._connected.length<nConnected){
         var cr=PD.Helpers.randomFrom(this._connected);
         var or=PD.Helpers.randomFrom(cr.neigbours());
-        if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(or.GUID)>-1)){
-            cr.connect(or);
-            this._connected.push(or);
-        }
+        cr.connect(or);
+        this.addToConnections(or);
+        // if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(or.GUID)>-1)){
+        //     cr.connect(or);
+        //     this._connected.push(or);
+        // }
     }
 
     if(PD.Dungeon.shopOnLevel(this._depth)){
@@ -258,8 +256,9 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
     }
 
     this.assignRoomTypes();
-    this.placeAllDoors();
+    //this.placeAllDoors();
     this.paint();
+    this.paintAllDoors();
 
     return true;
 
@@ -270,10 +269,6 @@ PD.Generator.Dungeon.prototype.paint=function(){
         var room = this._rooms[roomIndex];
         if(room.type()!=null){
             this.placeDoors(room);
-            for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
-                var room = this._connected[roomIndex];
-                this.paintDoors(room);
-            }
             var typePainter=PD.Generator.Dungeon.Room.Type.getPainter(room.type());
             if(typePainter!=undefined && typePainter!=null){
                 typePainter.paint(this, room);
@@ -290,6 +285,12 @@ PD.Generator.Dungeon.prototype.placeAllDoors=function() {
         this.placeDoors(r);
     }
 }
+PD.Generator.Dungeon.prototype.paintAllDoors=function() {
+    for (var index = 0; index < this._connected.length; index++) {
+        var r=this._connected[index];
+        this.paintDoors(r);
+    }
+}
 ///////////////////////////////////////////////
 /////  TODOTODOTODOTODO  /// Las asignaciones de las puertas a Generator._connected no esta funcionando como es debido, ya que el valor es nulo en algun momento
 ///////////////////////////////////////////////
@@ -298,29 +299,48 @@ PD.Generator.Dungeon.prototype.placeDoors=function(room) {
         var neig=room.connected[index].room;
         var door=room.connected[index].door;
         if(door==null){
+            console.log("Placing unexisting door ("+index+") for "+room.GUID+" and "+neig.GUID);
             var rct=room.intersect(neig);
             if(rct.width()==0){
-                door=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-1));
+                ndoor=new PD.Generator.Dungeon.Door(rct.left, PD.Helpers.randomInteger(rct.top+1, rct.bottom-1));
             }else{
-                door=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-1), rct.top);
+                ndoor=new PD.Generator.Dungeon.Door(PD.Helpers.randomInteger(rct.left+1, rct.right-1), rct.top);
             }
+            room.connected[index]={room:neig, door:ndoor};
+            var roomIndexOfRoom=neig.connected.map(function(e) { return e.room.GUID; }).indexOf(room.GUID);
+            neig.connected[roomIndexOfRoom]={room:room, door:ndoor};
             
-            var indOfNeig=(room.connected.filter(function(e) { return e.door==null; }).map(function(e) { return e.room.GUID; }).indexOf(neig.GUID));
-            var indOfRoom=(neig.connected.filter(function(e) { return e.door==null; }).map(function(e) { return e.room.GUID; }).indexOf(room.GUID));
-            if(indOfNeig>-1){
-                room.connected[indOfNeig]={room:neig, door:door};
-            }else{
-                room.connected.push({room:neig, door:door});
-                if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(neig.GUID)>-1)){
-                    this._connected.push(neig);
-                }
-            }
-            if(indOfRoom>-1){
-                neig.connected[indOfRoom]={room:room, door:door};
-            }else{
-                neig.connected.push({room:room, door:door});
-            }
+            // var indOfNeig=(room.connected.filter(function(e) {  }).map(function(e) { return e.room.GUID; }).indexOf(neig.GUID));
+            // var indOfRoom=(neig.connected.filter(function(e) {  }).map(function(e) { return e.room.GUID; }).indexOf(room.GUID));
+            // if(indOfNeig>-1){
+            //     //console.log("End door "+door);
+            //     var roomIndexOfNeig=this._connected.map(function(e) { return e.GUID; }).indexOf(neig.GUID);
+            //     if((roomIndexOfNeig>-1)){
+            //         this._connected[roomIndexOfNeig]=neig;
+            //     }
+            // }else{
+            //     //console.log("End door "+door);
+            //     if((roomIndexOfNeig>-1)){
+            //         this._connected[roomIndexOfNeig]=neig;
+            //     }else{
+            //         this._connected.push(neig);
+            //     }
+            // }
+            // if(indOfRoom>-1){
+            //     neig.connected[indOfRoom]={room:room, door:door};
+            //     //console.log("End door "+door);
+            // }else{
+            //     neig.connected.push({room:room, door:door});
+            //     //console.log("End door "+door);
+            // }
         }
+        
+    }
+}
+PD.Generator.Dungeon.prototype.addToConnections=function(room) {
+    if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(room.GUID)>-1)){
+        this._connected.push(room);
+        console.log("Added room "+room.GUID+" to connections");
     }
 }
 PD.Generator.Dungeon.prototype.paintDoors=function(room) {
@@ -330,10 +350,12 @@ PD.Generator.Dungeon.prototype.paintDoors=function(room) {
         var roomanddoor = room.connected[idx];
         var o_room=roomanddoor.room;
         var door=roomanddoor.door;
-        if(room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL && o_room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL){
-            this.setTileId(door.x, door.y, floorTile);
-        }else{
-            this.setTileId(door.x, door.y, doorTile);
+        if(door!=null){
+            if(room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL && o_room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL){
+                this.setTileId(door.x, door.y, floorTile);
+            }else{
+                this.setTileId(door.x, door.y, doorTile);
+            }
         }
     }
 }
@@ -365,12 +387,24 @@ PD.Generator.Dungeon.prototype._postGenerate=function(char){
 }
 PD.Generator.Dungeon.prototype.print=function(doNotUseSymbols){
     var res="";
+    var roomCenters=[];
+    var rIdentifierNames=["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","R","S","T","U","V","W","X","Y","Z"];
+    for (var i = 0; i < this._connected.length; i++) {
+        var element = this._connected[i];
+        roomCenters.push(element.center());
+    }
     for (var y = 0; y < this._height; y++) {
         for (var x = 0; x < this._width; x++) {
             var tileToPaint=this._tiles[y][x];
             if(doNotUseSymbols==undefined || doNotUseSymbols==false){
                 var ds=String.fromCodePoint(PD.Tiles.tile_DebugSymbol(tileToPaint));
-                if(ds!=null)tileToPaint=ds;
+                var centerIndex=roomCenters.map(function(e){return e.x+","+e.y}).indexOf(x+","+y);
+                if(centerIndex>-1){
+                    if(ds!=null)tileToPaint=rIdentifierNames[centerIndex];
+                }else{
+                    if(ds!=null)tileToPaint=ds;
+                }
+                
             }
             res+=tileToPaint;
         }
@@ -496,9 +530,7 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
                 if(neigs.length>1){
                     var rndRoom=PD.Helpers.randomFrom(neigs);
                     room.connect(rndRoom);
-                    if(!(this._connected.map(function(e) { return e.GUID; }).indexOf(rndRoom.GUID)>-1)){
-                        this._connected.push(rndRoom);
-                    }
+                    this.addToConnections(rndRoom);
                 }
             }
         }
