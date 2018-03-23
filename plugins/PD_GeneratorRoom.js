@@ -127,6 +127,9 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         if(typeToGet==PD.Generator.Dungeon.Room.Type.TUNNEL){
             return  new PD.Generator.Dungeon.Painters.Tunnel();
         }
+        if(typeToGet==PD.Generator.Dungeon.Room.Type.STANDARD){
+            return  new PD.Generator.Dungeon.Painters.Standard();
+        }
         if(typeToGet==PD.Generator.Dungeon.Room.Type.ENTRANCE){
             return  new PD.Generator.Dungeon.Painters.Entrance();
         }
