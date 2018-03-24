@@ -29,5 +29,5 @@ var $plugins =
 {"name":"Window_PDHero","status":true,"description":"The Choose Hero screen.","parameters":{}},
 {"name":"Window_PDCredits","status":true,"description":"The Credits screen.","parameters":{}},
 {"name":"Window_PDBadges","status":true,"description":"The Badges screen.","parameters":{}},
-{"name":"Window_PDUI","status":true,"description":"The panels that are shown over the game map while playing.","parameters":{}}
+{"name":"Window_PDUI","status":false,"description":"The panels that are shown over the game map while playing.","parameters":{}}
 ];

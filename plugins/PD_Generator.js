@@ -955,9 +955,11 @@ if(isInMV && PluginManager!=undefined){
     Game_TileEvent.prototype.constructor = Game_TileEvent;
 
     Game_TileEvent.prototype.initialize = function(mapId, xPos, yPos, dbEventId, dbEventData, eventId) {
+        Game_Character.prototype.initialize.call(this);
         this._dbEventId = dbEventId;
         this._dbEventData=dbEventData;
-        Game_Event.prototype.initialize.call(this, mapId, eventId);
+        this._mapId = mapId;
+        this._eventId = eventId;
         this.locate(xPos, yPos);
         this.refresh();
         

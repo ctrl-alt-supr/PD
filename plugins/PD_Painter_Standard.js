@@ -45,13 +45,23 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         var wallTile=PD.Tiles.name2id("WALL");
         this.fillByRect( dungeonGenerator, room, wallTile );
         var floorTile=PD.Tiles.name2id("ROOMFLOOR");
+        var trapTile=PD.Tiles.name2id("TRAPFIRE");
+        var ttrapTile=PD.Tiles.name2id("TRAPTRIGGERED");
         var emberTile=PD.Tiles.name2id("EMBERS");
         for (var i= room.top + 1; i < room.bottom; i++) {
 			for (var j=room.left + 1; j < room.right; j++) {
 				var t = emberTile;
 				switch (PD.Helpers.randomInteger( 4 )) {
-				case 0:
+                case 0:
                     t = floorTile;
+                    this.setByCoord(dungeonGenerator, j, i, t);
+                    break;
+                case 1:
+                    t = trapTile;
+                    this.setByCoord(dungeonGenerator, j, i, t);
+                    break;
+                case 2:
+                    t = ttrapTile;
                     this.setByCoord(dungeonGenerator, j, i, t);
                     break;
                 default:
