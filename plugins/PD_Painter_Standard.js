@@ -27,7 +27,6 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
                         return;
                     }
                     break;
-            
                 default:
                     break;
             }
@@ -83,6 +82,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         var wallTile=PD.Tiles.name2id("WALL");
         var bookTile=PD.Tiles.name2id("BOOKSHELF");
         var floorSpTile=PD.Tiles.name2id("FLOORSP");
+        var pedestalTile=PD.Tiles.name2id("PEDESTAL");
         var floorTile=PD.Tiles.name2id("ROOMFLOOR");
         this.fillByRect( dungeonGenerator, room, wallTile );
         this.fill( dungeonGenerator, room.left + 1, room.top + 1, room.width() - 1, room.height() - 1 , bookTile );
@@ -93,13 +93,37 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         for (var doorIndex = 0; doorIndex < connectedDoors.length; doorIndex++) {
             var door = connectedDoors[doorIndex];
             if (door.x == room.left) {
-				this.setByCoord( dungeonGenerator, door.x + 1, door.y, floorTile );
+                this.setByCoord( dungeonGenerator, door.x + 1, door.y, floorTile );  //Clear the tile next to the door
+                if(door.y<=room.top+1){ //If the door is placed on top left corner, we should also clear the tile down
+                    this.setByCoord( dungeonGenerator, door.x + 1, door.y + 1, floorTile );
+                }
+                if(door.y>=room.bottom-1){ //If the door is placed on bottom left corner, we should also clear the tile up
+                    this.setByCoord( dungeonGenerator, door.x + 1, door.y - 1, floorTile );
+                }
 			} else if (door.x == room.right) {
-				this.setByCoord( dungeonGenerator, door.x - 1, door.y, floorTile );
+                this.setByCoord( dungeonGenerator, door.x - 1, door.y, floorTile );   //Clear the tile next to the door
+                if(door.y<=room.top+1){ //If the door is placed on top right corner, we should also clear the tile down
+                    this.setByCoord( dungeonGenerator, door.x - 1, door.y + 1, floorTile );
+                }
+                if(door.y>=room.bottom-1){ //If the door is placed on bottom right corner, we should also clear the tile up
+                    this.setByCoord( dungeonGenerator, door.x - 1, door.y - 1, floorTile );
+                }
 			} else if (door.y == room.top) {
-				this.setByCoord( dungeonGenerator, door.x, door.y + 1, floorTile );
+                this.setByCoord( dungeonGenerator, door.x, door.y + 1, floorTile );           //Clear the tile next to the door
+                if(door.x<=room.left+1){ //If the door is placed on top left corner, we should also clear the tile on the right
+                    this.setByCoord( dungeonGenerator, door.x+1 , door.y + 1, floorTile );
+                }
+                if(door.x>=room.right-1){ //If the door is placed on top right corner, we should also clear the tile on the left
+                    this.setByCoord( dungeonGenerator, door.x-1 , door.y + 1, floorTile );
+                }
 			} else if (door.y == room.bottom) {
-				this.setByCoord( dungeonGenerator, door.x , door.y - 1, floorTile );
+                this.setByCoord( dungeonGenerator, door.x , door.y - 1, floorTile );          //Clear the tile next to the door
+                if(door.x<=room.left+1){ //If the door is placed on bottom left corner, we should also clear the tile on the right
+                    this.setByCoord( dungeonGenerator, door.x+1 , door.y - 1, floorTile );
+                }
+                if(door.x>=room.right-1){ //If the door is placed on bottom right corner, we should also clear the tile on the left
+                    this.setByCoord( dungeonGenerator, door.x-1 , door.y - 1, floorTile );
+                }
 			}	
         }
     }

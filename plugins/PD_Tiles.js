@@ -183,6 +183,7 @@ PD.Tiles.data=[
     {
         "tileId":2,
         "tileInternalName":"FLOORSP",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":30,
         "name":"Floor",
@@ -275,6 +276,7 @@ PD.Tiles.data=[
     {
         "tileId":8,
         "tileInternalName":"DECOFLOOR",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":32,
         "name":"Floor",
@@ -290,6 +292,7 @@ PD.Tiles.data=[
     {
         "tileId":9,
         "tileInternalName":"DECOWALL",
+        "debugSymbol":0x25EB,
         "tilesetLayer":3, 
         "tilesetTileId":28,
         "name":"Wall",
@@ -305,6 +308,7 @@ PD.Tiles.data=[
     {
         "tileId":10,
         "tileInternalName":"GRASS",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":31,
         "name":"High grass",
@@ -320,6 +324,7 @@ PD.Tiles.data=[
     {
         "tileId":11,
         "tileInternalName":"TRAMPLEDGRASS",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":2,
         "name":"Trampled grass",
@@ -335,6 +340,7 @@ PD.Tiles.data=[
     {
         "tileId":12,
         "tileInternalName":"EMBERS",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":25,
         "name":"Embers",
@@ -365,6 +371,7 @@ PD.Tiles.data=[
     {
         "tileId":14,
         "tileInternalName":"BARRICADE",
+        "debugSymbol":0x1F4DA,
         "tilesetLayer":3, 
         "tilesetTileId":29,
         "name":"Barricade",
@@ -380,6 +387,7 @@ PD.Tiles.data=[
     {
         "tileId":15,
         "tileInternalName":"BOOKSHELF",
+        "debugSymbol":0x1F4DA,
         "tilesetLayer":3, 
         "tilesetTileId":41,
         "name":"Bookshelf",
@@ -440,6 +448,7 @@ PD.Tiles.data=[
     {
         "tileId":19,
         "tileInternalName":"PEDESTAL",
+        "debugSymbol":0x25A4,
         "tilesetLayer":3, 
         "tilesetTileId":27,
         "name":"Pedestal",

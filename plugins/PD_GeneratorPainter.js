@@ -38,13 +38,13 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Painter.prototype.drawInside=function(dungeonGenerator, room, pointFrom, n, val){
         var stepPoint=new PD.Generator.Dungeon.Point();
         if(pointFrom.x==room.left){
-            stepPoint.setByCoord(+1,0);
+            stepPoint.set(+1,0);
         }else if(pointFrom.x==room.right){
-            stepPoint.setByCoord(-1,0);
+            stepPoint.set(-1,0);
         }else if(pointFrom.y==room.top){
-            stepPoint.setByCoord(0,+1);
+            stepPoint.set(0,+1);
         }else if(pointFrom.y==room.bottom){
-            stepPoint.setByCoord(0,-1);
+            stepPoint.set(0,-1);
         }
 
         var p=new PD.Generator.Dungeon.Point();

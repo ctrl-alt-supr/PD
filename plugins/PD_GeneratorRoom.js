@@ -136,6 +136,9 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         if(typeToGet==PD.Generator.Dungeon.Room.Type.EXIT){
             return  new PD.Generator.Dungeon.Painters.Exit();
         }
+        if(typeToGet==PD.Generator.Dungeon.Room.Type.WEAK_FLOOR){
+            return  new PD.Generator.Dungeon.Painters.WeakFloor();
+        }
         // }else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
         //     return  PD.Generator.Dungeon.Painters.SimplePassage;
         // }

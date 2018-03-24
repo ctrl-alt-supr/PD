@@ -401,14 +401,7 @@ PD.Generator.Dungeon.prototype.print=function(doNotUseSymbols){
             var tileToPaint=this._tiles[y][x];
             if(doNotUseSymbols==undefined || doNotUseSymbols==false){
                 var ds=String.fromCodePoint(PD.Tiles.tile_DebugSymbol(tileToPaint));
-                //var centerIndex=roomCenters.map(function(e){return e.x+","+e.y}).indexOf(x+","+y);
-                //if(centerIndex>-1){
-                //    tileToPaint=rIdentifierNames.length>centerIndex?rIdentifierNames[centerIndex]:"X";
-                    //tileToPaint=rIdentifierNames[centerIndex];
-                //}else{
-                    if(ds!=null)tileToPaint=ds;
-                //}
-                
+                if(ds!=null)tileToPaint=ds;  
             }
             res+=tileToPaint;
         }

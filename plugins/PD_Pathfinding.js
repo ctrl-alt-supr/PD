@@ -28,7 +28,7 @@ PD.Aliases = PD.Aliases || {};
 PD.Aliases.Game_Map = PD.Aliases.Game_Map || {};
 PD.Aliases.Game_Map.findDirectionTo = Game_Character.prototype.findDirectionTo
 Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
-    if(!$gameMap.hasGeneratedDungeon() || !this.canPass(this._x, this._y)){
+    if(!$gameMap.hasGeneratedDungeon() || !this.canPass(this._x, this._y)|| !this.canPass(goalX, goalY)){
         return PD.Aliases.Game_Map.findDirectionTo.call(this, goalX, goalY);
     }
     try{
