@@ -51,28 +51,18 @@
  * @plugindesc G1 - Generates dungeon levels during runtime.
  * @author Alex
  *
- * @help Sin comandos de plugin.
+ * @help This plugin doesn't provide any plugin command.
  * 
  * @param defaultsHeader
  * @text Default mappings
  * 
- * @param defaultTileMappings
- * @text Mapping of generated tiles
- * @desc How should each tile be mapped.
- * @parent defaultsHeader
- * @type struct<TileMapping>[]
- * @default ["{\"DungeonId\":\"1\",\"RpgmId\":\"1\"}","{\"DungeonId\":\"2\",\"RpgmId\":\"30\"}","{\"DungeonId\":\"3\",\"RpgmId\":\"4\"}","{\"DungeonId\":\"4\",\"RpgmId\":\"5\"}","{\"DungeonId\":\"5\",\"RpgmId\":\"7\"}","{\"DungeonId\":\"6\",\"RpgmId\":\"24\"}"]
+ * @param TileEventDBMapId
+ * @text Tile Event Database MapId
+ * @description The id of the map containing the event templates for interactive tiles.
+ * @default 4
+ * @type number
+ * @decimals 0
  * 
- * 
- * @param tilesetsHeader
- * @text Per tileset mappings
- * 
- * @param perTilesetTileMappings
- * @text Mapping of generated tiles
- * @desc How should each tile be mapped.
- * @parent tilesetsHeader
- * @type struct<PerTilesetTileMapping>[]
- * @default []
  * 
  * 
 */
@@ -509,8 +499,16 @@ PD.Generator.Dungeon.prototype.assignRoomTypes=function() {
                 if(this._depth%5==2 && this._specials.indexOf(PD.Generator.Dungeon.Room.Type.LABORATORY)>-1){
                     room.type(PD.Generator.Dungeon.Room.Type.LABORATORY);
                 }else{
-                    var sp=PD.Helpers.randomFrom(this._specials);
-                    room.type(sp);
+                    var isInvalidSpecial=function(rm){
+                        if(rm.type()==PD.Generator.Dungeon.Room.Type.WEAK_FLOOR && rm.connected.length>1){
+                            return true;
+                        }
+                        return false;
+                    }
+                    do{
+                        var sp=PD.Helpers.randomFrom(this._specials);
+                        room.type(sp);
+                    }while(isInvalidSpecial(room));
                 }
                 this._specials.splice(this._specials.indexOf(room.type()), 1);
                 specialRooms+=1;
@@ -609,25 +607,8 @@ try{
 if(isInMV && PluginManager!=undefined){
     var pars=PluginManager.parameters('PD_Generator');
     PD.Generator.Parameters={};
-    PD.Generator.Parameters.defaultTileMappings = JSON.parse(pars["defaultTileMappings"] || "[]")
-    for (var index = 0; index < PD.Generator.Parameters.defaultTileMappings.length; index++) {
-        var element = PD.Generator.Parameters.defaultTileMappings[index];
-        PD.Generator.Parameters.defaultTileMappings[index]=JSON.parse(element);
-        PD.Generator.Parameters.defaultTileMappings[index]["DungeonId"]=JSON.parse(PD.Generator.Parameters.defaultTileMappings[index]["DungeonId"]);
-        PD.Generator.Parameters.defaultTileMappings[index]["RpgmId"]=JSON.parse(PD.Generator.Parameters.defaultTileMappings[index]["RpgmId"]);
-    }
-    PD.Generator.Parameters.perTilesetTileMappings = JSON.parse(pars["perTilesetTileMappings"] || "[]")
-    for (var index = 0; index < PD.Generator.Parameters.perTilesetTileMappings.length; index++) {
-        var element = PD.Generator.Parameters.perTilesetTileMappings[index];
-        PD.Generator.Parameters.perTilesetTileMappings[index]=JSON.parse(element);
-        PD.Generator.Parameters.perTilesetTileMappings[index]["TilesetId"]=JSON.parse(PD.Generator.Parameters.perTilesetTileMappings[index]["TilesetId"]);
-        for (var index2 = 0; index < PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping.length; index2++) {
-            var element2 = PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2];
-            PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]=JSON.parse(element2);
-            PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["DungeonId"]=JSON.parse(PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["DungeonId"]);
-            PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["RpgmId"]=JSON.parse(PD.Generator.Parameters.perTilesetTileMappings[index].TileMapping[index2]["RpgmId"]);
-        }
-    }
+    PD.Generator.Parameters.TileEventDBMapId = Number(pars["TileEventDBMapId"] || "4");
+
             
 
 
@@ -652,11 +633,55 @@ if(isInMV && PluginManager!=undefined){
             if(this.createPathfinder!=undefined){
                 this._pathFindingFinder=new PF.AStarFinder();
             }
-            
+            this.setupTileEvents();
             $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._entrancePoint.x, this._dungeonGenerator._entrancePoint.y, $gamePlayer.direction(), 2);
         }
     }
-
+    // PD.Generator.Aliases.Game_Player=PD.Generator.Aliases.Game_Player||{};
+    // PD.Generator.Aliases.Game_Player.performTransfer=Game_Player.prototype.performTransfer;
+    // Game_Player.prototype.performTransfer=function(){
+    //     PD.Generator.Aliases.Game_Player.performTransfer.call(this);
+    //     for (var tileEventIndex = 0; tileEventIndex < $gameMap._tileEvents.length; tileEventIndex++) {
+    //         var te = $gameMap._tileEvents[tileEventIndex];
+    //         te.checkTileNameComment();
+    //     }
+    // }
+    Game_Map.prototype.getTileEventDBData=function(pdTileID){
+        var tlEventId=PD.Tiles.tile_EventId(pdTileID);
+        if(tlEventId<=0) return null;
+        if(window["$dataMap_"+PD.Generator.Parameters.TileEventDBMapId]==undefined || window["$dataMap_"+PD.Generator.Parameters.TileEventDBMapId]==null){
+            return null;
+        }
+        var db=window["$dataMap_"+PD.Generator.Parameters.TileEventDBMapId];
+        return db.events.length>tlEventId?db.events[tlEventId]:null;
+    }
+    Game_Map.prototype.getTileEventLocalTriggers=function(pdTileID){
+        var lA=PD.Tiles.tile_EventLocalA(pdTileID);
+        var lB=PD.Tiles.tile_EventLocalB(pdTileID);
+        var lC=PD.Tiles.tile_EventLocalC(pdTileID);
+        var lD=PD.Tiles.tile_EventLocalD(pdTileID);
+        return [lA, lB,lC,lD];
+    }
+    Game_Map.prototype.setupTileEvents = function() {
+        this._tileEvents = [];
+        for (var y = 0; y < this.height(); y++) {
+            for (var x = 0; x < this.width(); x++) {
+                var genTileId=this._dungeonGenerator.getTileId(x, y);
+                var eventDBData=this.getTileEventDBData(genTileId);
+                if(eventDBData!=null){
+                    var tlEventId=PD.Tiles.tile_EventId(genTileId);
+                    var lts=this.getTileEventLocalTriggers(genTileId);
+                    $gameSelfSwitches.setValue([this._mapId,this._events.length,"A"],lts[0]);
+                    $gameSelfSwitches.setValue([this._mapId,this._events.length,"B"],lts[1]);
+                    $gameSelfSwitches.setValue([this._mapId,this._events.length,"C"],lts[2]);
+                    $gameSelfSwitches.setValue([this._mapId,this._events.length,"D"],lts[3]);
+                    this._events.push(new Game_TileEvent(this._mapId, x, y, tlEventId, eventDBData, this._events.length));
+                    this._tileEvents.push(this._events[this._events.length-1]);
+                }
+            }
+        }
+        this.refreshTileEvents();
+    };
 
     Game_Map.prototype.shouldGenerateDungeon=function(){
         if(this.parseDungeonNotetag($dataMap.note)!=null){
@@ -799,8 +824,13 @@ if(isInMV && PluginManager!=undefined){
             var filename = 'Map%1.json'.format(mapId.padZero(3));
             this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap', filename));
             this.loadDataFile('$dataMap', filename);
+            //We load the EventTileDatabase (ToDo:    HARDCODED TO 004!!! CHANGE THIS SOOON)
+            var eventTileDatabaseMapId = PD.Generator.Parameters.TileEventDBMapId;
+            if(window["$dataMap_"+eventTileDatabaseMapId]==undefined || window["$dataMap_"+eventTileDatabaseMapId]==null){
+                DataManager.loadOtherMapData(eventTileDatabaseMapId);
+            }
             //We also load all child maps datas
-            var childMapIds=this.getChildMapIds(mapId);
+            var childMapIds=[];            //this.getChildMapIds(mapId);
             for (var childIndex = 0; childIndex < childMapIds.length; childIndex++) {
                 var cmapId = childMapIds[childIndex];
                 if(window["$dataMap_"+cmapId]==undefined || window["$dataMap_"+cmapId]==null){
@@ -822,17 +852,17 @@ if(isInMV && PluginManager!=undefined){
         return !isAnyDataMissing;
     };
     //Takes care of the loading of all the data maps on initialization
-    Game_Map.prototype.loadChildMapDatas=function () {
-        var childMapIds=this.getChildMapIds();
-        for (var childIndex = 0; childIndex < childMapIds.length; childIndex++) {
-            var cmapId = childMapIds[childIndex];
-            if(window["$dataMap_"+cmapId]!=undefined && window["$dataMap_"+cmapId]!=null){
-                return window["$dataMap_"+cmapId];
-            }else{
-                DataManager.loadOtherMapData(cmapId);
-            }
-        }
-    }
+    // Game_Map.prototype.loadChildMapDatas=function () {
+    //     var childMapIds=this.getChildMapIds();
+    //     for (var childIndex = 0; childIndex < childMapIds.length; childIndex++) {
+    //         var cmapId = childMapIds[childIndex];
+    //         if(window["$dataMap_"+cmapId]!=undefined && window["$dataMap_"+cmapId]!=null){
+    //             return window["$dataMap_"+cmapId];
+    //         }else{
+    //             DataManager.loadOtherMapData(cmapId);
+    //         }
+    //     }
+    // }
     Game_Map.prototype.getChildMapData=function (childId) {
         return window["$dataMap_"+childId];
     }
@@ -904,4 +934,98 @@ if(isInMV && PluginManager!=undefined){
             }
         }
     }
+
+
+
+
+
+
+
+    //-----------------------------------------------------------------------------
+    // Game_TileEvent
+    //
+    // The game object class for an event. It contains functionality for event page
+    // switching and running parallel process events.
+
+    function Game_TileEvent() {
+        this.initialize.apply(this, arguments);
+    }
+
+    Game_TileEvent.prototype = Object.create(Game_Event.prototype);
+    Game_TileEvent.prototype.constructor = Game_TileEvent;
+
+    Game_TileEvent.prototype.initialize = function(mapId, xPos, yPos, dbEventId, dbEventData, eventId) {
+        this._dbEventId = dbEventId;
+        this._dbEventData=dbEventData;
+        Game_Event.prototype.initialize.call(this, mapId, eventId);
+        this.locate(xPos, yPos);
+        this.refresh();
+        
+    };
+
+    Game_TileEvent.prototype.setupPage=function(){
+        Game_Event.prototype.setupPage.call(this);
+        this.checkTileNameComment();
+    }
+    Spriteset_Map.prototype.refreshTilemap = function() {
+        if(this._tilemap==undefined || this._tilemap==null){
+            // if (Graphics.isWebGL()) {
+            //     this._tilemap = new ShaderTilemap();
+            // } else {
+            //     this._tilemap = new Tilemap();
+            // }
+            // this._tilemap.tileWidth = $gameMap.tileWidth();
+            // this._tilemap.tileHeight = $gameMap.tileHeight();
+            // this._tilemap.horizontalWrap = $gameMap.isLoopHorizontal();
+            // this._tilemap.verticalWrap = $gameMap.isLoopVertical();
+            return false;
+        }
+        this._tilemap.setData($gameMap.width(), $gameMap.height(), $gameMap.data());
+        this._tilemap.refresh();
+    };
+    
+    Game_TileEvent.prototype.checkTileNameComment = function() {
+        if (!this._erased && this.page()) {this.list().forEach(function(l) {
+                if (l.code === 108) {var comment = l.parameters[0].split(' : ');
+                    if (comment[0].toLowerCase() == "tilename"){
+                        var tileInternalName=String(comment[1]);
+                        var tid=PD.Tiles.name2id(tileInternalName);
+                        $gameMap._dungeonGenerator.setTileId(this.x, this.y, tid);	
+                        if(SceneManager._scene._spriteset!=undefined && SceneManager._scene._spriteset!=null){
+                            //SceneManager._scene._spriteset._tilemap=null;
+                            SceneManager._scene._spriteset.refreshTilemap();
+                            $gamePlayer.updateFOW();
+                        }
+                        //$gameMap._tilemap.refresh(); 
+                    };
+                };
+            }, this);
+        };
+    };
+    Game_TileEvent.prototype.hasOtherEventOver=function(){
+        var eventsHere=$gameMap.eventsXy(this.x, this.y);
+        var slf=this;
+        return eventsHere.filter(function(eE){
+            return eE.eventId!=slf.eventId;
+        }).length>0;
+    }
+    Game_TileEvent.prototype.hasPlayerOver=function(){
+        return $gamePlayer.x==this.x && $gamePlayer.y==this.y;
+    }
+    Game_TileEvent.prototype.hasSomethingOver=function(){
+        return this.hasPlayerOver()||this.hasOtherEventOver();
+    }
+    Game_TileEvent.prototype.event = function() {
+        return window["$dataMap_"+PD.Generator.Parameters.TileEventDBMapId].events[this._dbEventId];
+    };
+    Game_TileEvent.prototype.initMembers = function() {
+        Game_Event.prototype.initMembers.call(this);
+    };
+
+    Game_TileEvent.prototype.dbEventId = function() {
+        return this._dbEventId;
+    };
+    Game_TileEvent.prototype.dbEventData = function() {
+        return this._dbEventData;
+    };
 }

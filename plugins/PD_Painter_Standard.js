@@ -126,6 +126,8 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
                 }
 			}	
         }
+        var cPoint=room.center();
+        this.setByCoord( dungeonGenerator, cPoint.x, cPoint.y, pedestalTile );
     }
 }
 

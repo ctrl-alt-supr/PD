@@ -24,6 +24,8 @@ Game_Map.prototype.createPathfinder=function(character){
     }
     this._pathFindingGrid=new PF.Grid(walkableMatrix);
 }
+
+
 PD.Aliases = PD.Aliases || {};
 PD.Aliases.Game_Map = PD.Aliases.Game_Map || {};
 PD.Aliases.Game_Map.findDirectionTo = Game_Character.prototype.findDirectionTo
@@ -48,3 +50,30 @@ Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
     }
     return 0;
 };
+PD.Aliases.Game_Character=PD.Aliases.Game_Character||{};
+PD.Aliases.Game_Character.canPass=Game_Character.prototype.canPass;
+Game_Character.prototype.canPass=function(x, y, d){
+    var x2 = $gameMap.roundXWithDirection(x, d);
+    var y2 = $gameMap.roundYWithDirection(y, d);
+    if (!$gameMap.isValid(x2, y2)) {
+        return false;
+    }
+    if (this.isThrough() || this.isDebugThrough()) {
+        return true;
+    }
+    if($gameMap.hasGeneratedDungeon()){
+        if (!PD.Tiles.tile_Through($gameMap._dungeonGenerator.getTileId(x2, y2))) {
+            return false;
+        }
+    }else{
+        if (!this.isMapPassable(x, y, d)) {
+            return false;
+        }
+    }
+    if (this.isCollidedWithCharacters(x2, y2)) {
+        return false;
+    }
+    return true;
+}
+
+

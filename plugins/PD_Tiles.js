@@ -147,6 +147,61 @@ PD.Tiles.tileName_TilesetTileId=function(name){
     if(foundData==null) return 0;
     return foundData.tilesetTileId;
 }
+//Tileset event id
+PD.Tiles.tile_EventId=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null || foundData.eventId==undefined) return -1;
+    return foundData.eventId;
+}
+PD.Tiles.tileName_EventId=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null|| foundData.eventId==undefined) return -1;
+    return foundData.eventId;
+}
+//Tileset eventTriggerA
+PD.Tiles.tile_EventLocalA=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null || foundData.eventLocalA==undefined) return false;
+    return foundData.eventLocalA;
+}
+PD.Tiles.tileName_EventLocalA=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null || foundData.eventLocalA==undefined) return false;
+    return foundData.eventLocalA;
+}
+//Tileset eventTriggerB
+PD.Tiles.tile_EventLocalB=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null || foundData.eventLocalB==undefined) return false;
+    return foundData.eventLocalB;
+}
+PD.Tiles.tileName_EventLocalB=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null || foundData.eventLocalB==undefined) return false;
+    return foundData.eventLocalB;
+}
+//Tileset eventTriggerC
+PD.Tiles.tile_EventLocalC=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null || foundData.eventLocalC==undefined) return false;
+    return foundData.eventLocalC;
+}
+PD.Tiles.tileName_EventLocalC=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null || foundData.eventLocalC==undefined) return false;
+    return foundData.eventLocalC;
+}
+//Tileset eventTriggerD
+PD.Tiles.tile_EventLocalD=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null || foundData.eventLocalD==undefined) return false;
+    return foundData.eventLocalD;
+}
+PD.Tiles.tileName_EventLocalD=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null || foundData.eventLocalD==undefined) return false;
+    return foundData.eventLocalD;
+}
 PD.Tiles.data=[
     {
         "tileId":0,
@@ -221,8 +276,12 @@ PD.Tiles.data=[
         "name":"Closed door",
         "description":"",
         "through":true,
-        "occluder":false,
+        "occluder":true,
         "eventId":1,
+        "eventLocalA":false,
+        "eventLocalB":false,
+        "eventLocalC":false,
+        "eventLocalD":false,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -237,7 +296,11 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":2,
+        "eventId":1,
+        "eventLocalA":true,
+        "eventLocalB":false,
+        "eventLocalC":false,
+        "eventLocalD":false,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -250,9 +313,13 @@ PD.Tiles.data=[
         "tilesetTileId":26,
         "name":"Locked door",
         "description":"This door is locked, you need a matching key to unlock it.",
-        "through":true,
+        "through":false,
         "occluder":false,
-        "eventId":3,
+        "eventId":1,
+        "eventLocalA":false,
+        "eventLocalB":true,
+        "eventLocalC":false,
+        "eventLocalD":false,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -267,7 +334,7 @@ PD.Tiles.data=[
         "description":"",
         "through":false,
         "occluder":false,
-        "eventId":4,
+        "eventId":-1,
         "flamable":true,
         "hidden":true,
         "liquid":false,
@@ -315,7 +382,11 @@ PD.Tiles.data=[
         "description":"Dense vegetation blocks the view.",
         "through":true,
         "occluder":false,
-        "eventId":5,
+        "eventId":2,
+        "eventLocalA":false,
+        "eventLocalB":true,
+        "eventLocalC":false,
+        "eventLocalD":false,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -331,7 +402,11 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":6,
+        "eventId":2,
+        "eventLocalA":true,
+        "eventLocalB":true,
+        "eventLocalC":false,
+        "eventLocalD":false,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -378,7 +453,7 @@ PD.Tiles.data=[
         "description":"The wooden barricade is firmly set but has dried over the years. Might it burn?",
         "through":true,
         "occluder":false,
-        "eventId":7,
+        "eventId":-1,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -394,7 +469,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":8,
+        "eventId":-1,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -409,7 +484,7 @@ PD.Tiles.data=[
         "description":"Drop some seeds here to cook a potion.",
         "through":false,
         "occluder":false,
-        "eventId":9,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -424,7 +499,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":10,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -439,7 +514,7 @@ PD.Tiles.data=[
         "description":"The well has run dry.",
         "through":true,
         "occluder":false,
-        "eventId":11,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -486,7 +561,7 @@ PD.Tiles.data=[
         "description":"Stairs lead up to the upper depth.",
         "through":true,
         "occluder":false,
-        "eventId":12,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -502,7 +577,7 @@ PD.Tiles.data=[
         "description":"Stairs lead down to the lower depth.",
         "through":true,
         "occluder":false,
-        "eventId":13,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -517,7 +592,7 @@ PD.Tiles.data=[
         "description":"Stairs lead down to the lower depth.",
         "through":false,
         "occluder":false,
-        "eventId":14,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -532,7 +607,7 @@ PD.Tiles.data=[
         "description":"Heavy bars block the stairs leading down.",
         "through":false,
         "occluder":false,
-        "eventId":15,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -547,7 +622,7 @@ PD.Tiles.data=[
         "description":"You can't read the text from here.",
         "through":false,
         "occluder":false,
-        "eventId":16,
+        "eventId":-1,
         "flamable":true,
         "hidden":false,
         "liquid":false,
@@ -562,7 +637,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":17,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -577,7 +652,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":18,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -592,7 +667,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":19,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -607,7 +682,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":20,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -622,7 +697,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":21,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -637,7 +712,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":22,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -652,7 +727,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":23,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -667,7 +742,7 @@ PD.Tiles.data=[
         "description":"Stepping onto a hidden pressure plate will activate the trap.",
         "through":true,
         "occluder":false,
-        "eventId":24,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -682,7 +757,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":25,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -697,7 +772,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":26,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -712,7 +787,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":27,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -727,7 +802,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":28,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -742,7 +817,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":29,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -757,7 +832,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":30,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -772,7 +847,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":31,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -787,7 +862,7 @@ PD.Tiles.data=[
         "description":"",
         "through":true,
         "occluder":false,
-        "eventId":32,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
@@ -802,7 +877,7 @@ PD.Tiles.data=[
         "description":"The trap has been triggered before and it's not dangerous anymore.",
         "through":true,
         "occluder":false,
-        "eventId":33,
+        "eventId":-1,
         "flamable":false,
         "hidden":false,
         "liquid":false,
