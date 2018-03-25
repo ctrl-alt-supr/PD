@@ -8913,7 +8913,7 @@ function JsonEx() {
  * @type Number
  * @default 100
  */
-JsonEx.maxDepth = 100;
+JsonEx.maxDepth = 1500;
 
 JsonEx._id = 1;
 JsonEx._generateId = function(){

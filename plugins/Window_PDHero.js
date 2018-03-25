@@ -95,6 +95,7 @@ Scene_ChooseHero.prototype.scrollBackgroundB=function(){
 
 Scene_ChooseHero.prototype.commandNewGame = function() {
     DataManager.setupNewGame();
+    PD.Dungeon.reset();
     this._playCommands.close();
     this._heroList.close();
     this.fadeOutAll();

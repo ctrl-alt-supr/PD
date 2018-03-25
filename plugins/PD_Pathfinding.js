@@ -30,11 +30,17 @@ PD.Aliases = PD.Aliases || {};
 PD.Aliases.Game_Map = PD.Aliases.Game_Map || {};
 PD.Aliases.Game_Map.findDirectionTo = Game_Character.prototype.findDirectionTo
 Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
+    if(goalX==this.x && goalY==this.y){
+        return 0;
+    }
     if(!$gameMap.hasGeneratedDungeon() || !this.canPass(this._x, this._y)|| !this.canPass(goalX, goalY)){
         return PD.Aliases.Game_Map.findDirectionTo.call(this, goalX, goalY);
     }
     try{
         $gameMap.createPathfinder(this);
+        if($gameMap._pathFindingFinder==undefined){
+            $gameMap._pathFindingFinder=new PF.AStarFinder();
+        }
         var path = $gameMap._pathFindingFinder.findPath(this._x, this._y, goalX, goalY, $gameMap._pathFindingGrid.clone());
         if(path.length>1){
             var deltaX2 = this.deltaXFrom(path[1][0]);

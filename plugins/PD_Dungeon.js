@@ -10,6 +10,10 @@ PD.Dungeon=function() {
     throw new Error('This is a static class');
 }
 
+PD.Dungeon.reset=function() {
+    PD.Dungeon._levels=[];
+}
+
 PD.Dungeon._levels=[];
 PD.Dungeon.level=function(depth){
     if(this._levels[depth]!=undefined && this._levels[depth]!=null){

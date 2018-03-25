@@ -7,8 +7,10 @@
 PD=PD||{};
 PD.Levels=[];
 PD.Level=function(depth){
-    this._depth=depth;
-    this._generator=new PD.Generator.Dungeon(this);
+    if(depth!=undefined){
+        this._depth=depth;
+        this._generator=new PD.Generator.Dungeon(this);
+    }
 }
 PD.Level.prototype.constructor=PD.Level;
 PD.Level.prototype.depth=function(){

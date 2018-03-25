@@ -84,27 +84,31 @@ var PD=PD || {};
 PD.Generator=PD.Generator||{};
 
 PD.Generator.Dungeon=function(levelObject){
-    PD.Generator.Dungeon.prototype.initialize.call(this, levelObject);
+    if(levelObject!=undefined){
+        PD.Generator.Dungeon.prototype.initialize.call(this, levelObject);
+    }
 };
 PD.Generator.Dungeon.prototype.initialize=function(levelObject){
-    this._depth=levelObject._depth;
-    this._height=$gameMap.height();
-    this._width=$gameMap.width();
-    this._minRoomSize=7;
-    this._maxRoomSize=9;
-    this.reset();
-    var genOk=false;
-    var tryes=0;
-    do{
-        genOk=this.generate();
-        tryes+=1;
-    }while(!genOk && tryes<10);
-    if(!genOk){
-        console.error("Couldn't create dungeon after 10 tryes");
+    if(levelObject!=undefined){
+        this._depth=levelObject._depth;
+        this._height=$gameMap.height();
+        this._width=$gameMap.width();
+        this._minRoomSize=7;
+        this._maxRoomSize=9;
+        this.reset();
+        var genOk=false;
+        var tryes=0;
+        do{
+            genOk=this.generate();
+            tryes+=1;
+        }while(!genOk && tryes<10);
+        if(!genOk){
+            console.error("Couldn't create dungeon after 10 tryes");
+        }
+    
+        this.print();
+        this._showStats();
     }
-
-    this.print();
-    this._showStats();
 }
 PD.Generator.Dungeon.prototype.map=function(){
     return this._tiles;
