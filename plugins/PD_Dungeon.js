@@ -110,3 +110,43 @@ PD.Dungeon.setStartPosType=function(nType, nPoint){
     }
 }
 
+Game_Player.prototype.performTransfer = function() {
+    if (this.isTransferring()) {
+        this.setDirection(this._newDirection);
+        if (this._newMapId !== $gameMap.mapId() || this._needsMapReload) {
+            $gameMap.setup(this._newMapId);
+            this._needsMapReload = false;
+            if($gameMap.hasGeneratedDungeon()){
+                var startPosType=PD.Dungeon.startPosType();
+                if(startPosType==PD.Dungeon.StartPosition.EXIT){
+                    this._newX=this._dungeonGenerator._exitPoint.x;
+                    this._newY=this._dungeonGenerator._exitPoint.y;
+                }else if(startPosType==PD.Dungeon.StartPosition.PIT){
+                    
+                }else if(startPosType==PD.Dungeon.StartPosition.RANDOM){
+                    
+                }else if(startPosType==PD.Dungeon.StartPosition.CUSTOM){
+                    var startPos=PD.Dungeon.startPos();
+                    if(startPos!=undefined && startPos!=null){
+                        if($gameMap.isValid(startPos.x, startPos.y)){
+                            this._newX=startPos.x;
+                            this._newY=startPos.y;
+                        }else{      //If the custom position is invalid, we teleport to the entrance as a fallback
+                            this._newX=this._dungeonGenerator._entrancePoint.x;
+                            this._newY=this._dungeonGenerator._entrancePoint.y;
+                        }
+                    }
+                }else{
+                    this._newX=this._dungeonGenerator._entrancePoint.x;
+                    this._newY=this._dungeonGenerator._entrancePoint.y;
+                }    
+            }
+        }
+        this.locate(this._newX, this._newY);
+        this.refresh();
+        this.clearTransferInfo();
+    }
+};
+
+
+
