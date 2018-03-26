@@ -399,12 +399,10 @@ Game_CharacterBase.prototype.canSeeTile = function(x, y) {
 };
 Game_CharacterBase.prototype.knowsTile = function(x, y) {
     if(this.constructor===Game_Player){
-        if(!$gameMap.hasGeneratedDungeon()){
+        if(!$gameMap.shouldGenerateDungeon()){
             return true;
         }
-        return PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].filter(function(itm){
-            return itm.x==x && itm.y==y;
-        }).length>0;  
+        return PD.Dungeon.isDiscoveredTile($gameMap._dungeonGenerator._depth, x, y);  
     }
     return true;
 };

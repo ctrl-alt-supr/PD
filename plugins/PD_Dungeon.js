@@ -57,6 +57,11 @@ PD.Dungeon.createDepthLevel=function(depth){
     //Shouldn't happen... but whatever...
     return null;
 }
+PD.Dungeon.isDiscoveredTile=function(depth, x, y){
+    return PD.Dungeon._discoveredTiles[depth].filter(function(itm){
+        return (itm.x==x && itm.y==y);
+    }).length>0;  
+}
 PD.Dungeon.prepareDepthLevel=function(depth){
     if(!this.hasLevel(depth)){
         return this.createDepthLevel(depth);
@@ -70,7 +75,7 @@ PD.Dungeon.maxReachedDepth=function(){
 }
 
 PD.Dungeon.currentDepth=function(){
-    if($gameMap.hasGeneratedDungeon()){
+    if($gameMap.hasGeneratedDungeon() || $gameMap.shouldGenerateDungeon()){
         PD.Dungeon.lastCurrentDepth=$gameMap._dungeonGenerator._depth;
     }
     return PD.Dungeon.lastCurrentDepth;
