@@ -144,7 +144,8 @@ Game_Player.prototype.performTransfer = function() {
                 }else{
                     this._newX=$gameMap._dungeonGenerator._entrancePoint.x;
                     this._newY=$gameMap._dungeonGenerator._entrancePoint.y;
-                }    
+                }  
+                $gamePlayer._visibleTiles=[];  
             }
         }
         this.locate(this._newX, this._newY);
