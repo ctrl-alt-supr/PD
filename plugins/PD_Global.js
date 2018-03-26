@@ -70,8 +70,6 @@ DataManager.makeSaveContents = function() {
     // A save data does not contain $gameTemp, $gameMessage, and $gameTroop.
     var contents = {};
 
-
-    
     contents.system       = $gameSystem;
     contents.screen       = $gameScreen;
     contents.timer        = $gameTimer;

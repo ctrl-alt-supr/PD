@@ -11,6 +11,7 @@ PD.Dungeon=function() {
 }
 
 PD.Dungeon.reset=function() {
+    PD.Dungeon._classId=1;
     PD.Dungeon._discoveredTiles=[];
     PD.Dungeon._levels=[];
     PD.Dungeon._startPosType=PD.Dungeon.StartPosition.ENTRANCE;
@@ -122,6 +123,8 @@ Game_Player.prototype.performTransfer = function() {
             $gameMap.setup(this._newMapId);
             this._needsMapReload = false;
             if($gameMap.hasGeneratedDungeon()){
+                //If the destination map is a dungeon depth we adjust the new player position according to 
+                //what was set in PD.Dungeon as the current startPosition Type (Exit, entrance, pit, random, custom...)
                 var startPosType=PD.Dungeon.startPosType();
                 if(startPosType==PD.Dungeon.StartPosition.EXIT){
                     this._newX=$gameMap._dungeonGenerator._exitPoint.x;
