@@ -287,3 +287,120 @@ PD_Button.prototype.canvasToLocalY = function(y) {
     }
     return y;
 };
+
+//-----------------------------------------------------------------------------
+//  PD_SpriteButton
+//-----------------------------------------------------------------------------
+
+function PD_SpriteButton() {
+    this.initialize.apply(this, arguments);
+}
+
+PD_SpriteButton.prototype = Object.create(Sprite_Button.prototype);
+PD_SpriteButton.prototype.constructor = PD_SpriteButton;
+
+PD_SpriteButton.prototype.initialize = function() {
+    Sprite_Button.prototype.initialize.call(this);
+	this._hidden = false;
+    //this.setupButton(gameBtn);
+    
+};
+
+// PD_SpriteButton.prototype.setupButton = function(b) {
+// 	this._btn = b;
+// 	this.bitmap = ImageManager.loadSystem(b.image);
+// 	var h = this.bitmap.height / 2;
+// 	var w = this.bitmap.width;
+// 	this.setColdFrame(0, 0, w, h);
+// 	this.setHotFrame(0, h, w, h);
+	
+// 	this.x = b.x;
+// 	this.y = b.y;
+// };
+
+PD_SpriteButton.prototype.processTouch = function() {
+    if (this.isActive() && this.opacity >= 255) {
+        if (TouchInput.isTriggered() && this.isButtonTouched()) {
+            this._touching = true;
+			this._wasTouching = true;
+		}
+        if (this._touching) {
+            if (TouchInput.isReleased() || !this.isButtonTouched()) {
+                if (this._wasTouching) {
+					console.log(this._btn);
+                    this.callClickHandler();
+                }
+				this._touching = false;
+				this._wasTouching = false;
+            } else {
+				// while pressed
+				this.callPressHandler();
+			}
+        } else if (this._wasTouching) {
+			// for click holding, moving off of button and releasing issue
+			this.callClickHandler();
+			this._wasTouching = false;
+			this._touching = false;
+		}
+    } else {
+        this._touching = false;
+		if (this._wasTouching) {
+			this.callClickHandler();
+			this._wasTouching = false;
+		};
+    }
+};
+
+PD_SpriteButton.prototype.setPressHandler = function(method) {
+    this._pressHandler = method;
+};
+
+PD_SpriteButton.prototype.callPressHandler = function() {
+    if (this._pressHandler) {
+        this._pressHandler();
+    }
+};
+
+PD_SpriteButton.prototype.update = function() {
+	Sprite_Button.prototype.update.call(this);
+	//this.updateVisibility();
+};
+
+// PD_SpriteButton.prototype.updateVisibility = function() {
+// 	if ($gameSystem._hideBtns) {
+// 		this.opacity -= Galv.SBTNS.fade;
+// 	} else if ($gameMap.isEventRunning()) {
+// 		this.opacity = Math.max(this.opacity - 0.1,this._btn.eOpacity);
+// 	} else {
+// 		this.opacity += 0.1;
+// 	}
+// };
+PD_SpriteButton.onButton = function() {
+	var x = TouchInput.x;
+	var y = TouchInput.y;
+	var btns = SceneManager._scene._PDButtons;
+	if (!btns) return false;
+	var result = false;
+	for (var i = 0; i < btns.length; i++) {
+		if (btns[i] && x > btns[i].x && x < btns[i].x + btns[i].width && y > btns[i].y && y < btns[i].y + btns[i].height) {
+			result = true;
+			break;
+		};
+	}
+	return result;
+};
+PD=PD||{};
+PD.Aliases=PD.Aliases||{};
+PD.Aliases.Scene_Base=PD.Aliases.Scene_Base||{};
+PD.Aliases.Scene_Base.initialize=Scene_Base.prototype.initialize;
+Scene_Base.prototype.initialize = function() {
+	Input.clear();
+	this._PDuttons = [];
+    PD.Aliases.Scene_Base.initialize.call(this);
+}
+PD.Aliases.Game_Temp=PD.Aliases.Game_Temp||{};
+PD.Aliases.Game_Temp.setDestination=Game_Temp.prototype.setDestination;
+Game_Temp.prototype.setDestination = function(x, y) {
+	if (PD_SpriteButton.onButton()) return;
+    PD.Aliases.Game_Temp.setDestination.call(this,x,y);
+};

@@ -88,35 +88,9 @@
  *
 */
 PD=PD||{};
-PD.Aliases={};
+PD.Aliases=PD.Aliases||{};
 //Stores the DunGen.Dungeon instance of each level of the dungeon.
-PD.Globals={};
-PD.Globals.dungeonGenerators=[
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
-];
-PD.Globals.knowTileDatas=[
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null,
-    null
-];
+
 
 /////////////////////////////////////////////////////////////////////   FOW  ///////////////////////////////////////////////////////////////////////
 PD.FOW={};
@@ -313,7 +287,9 @@ Game_CharacterBase.prototype.update = function() {
     PD.Aliases.Game_CharacterBase.update.call(this);
     if($gameMap.hasGeneratedDungeon()){
         if(this._FOW_oldX!= this._x || this._FOW_oldY!=this._y){
-            this.updateFOW();
+            if(!$gamePlayer.isTransferring() && $gameMap._interpreter._waitMode!="transfer"){
+                this.updateFOW();
+            }
             this._FOW_oldX=this._x;
             this._FOW_oldY=this._y;
         }
@@ -325,11 +301,12 @@ Game_CharacterBase.prototype.updateFOW = function() {
         var orX=this._x;
         var orY=this._y;
         var usesDiscovery=PD.FOW.Params.fogDiscover;
+        PD.FOW.paintFog(false);
         this._visibleTiles.forEach(function(each){
             PD.FOW.paintFogTile(each.x, each.y, usesDiscovery);
         }, this);
          if(usesDiscovery){
-            this._discoveredTiles.forEach(function(each){
+            PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].forEach(function(each){
                 PD.FOW.paintFogTile(each.x, each.y, true);
             }, this);
          }
@@ -343,7 +320,7 @@ Game_CharacterBase.prototype.updateFOW = function() {
                 PD.FOW.clearFogTile(el.x, el.y);
                 this._visibleTiles.push(el);
                 if(!this.knowsTile(el.x, el.y)){
-                    this._discoveredTiles.push(el);
+                    PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].push(el);
                 }
             }
             destY=orY-this._viewRange;
@@ -354,7 +331,7 @@ Game_CharacterBase.prototype.updateFOW = function() {
                 PD.FOW.clearFogTile(el.x, el.y);
                 this._visibleTiles.push(el);
                 if(!this.knowsTile(el.x, el.y)){
-                    this._discoveredTiles.push(el);
+                    PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].push(el);
                 }
             }
             //horizontal line
@@ -366,7 +343,7 @@ Game_CharacterBase.prototype.updateFOW = function() {
                 PD.FOW.clearFogTile(el.x, el.y);
                 this._visibleTiles.push(el);
                 if(!this.knowsTile(el.x, el.y)){
-                    this._discoveredTiles.push(el);
+                    PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].push(el);
                 }
             }
             destX=orX+this._viewRange;
@@ -377,15 +354,16 @@ Game_CharacterBase.prototype.updateFOW = function() {
                 PD.FOW.clearFogTile(el.x, el.y);
                 this._visibleTiles.push(el);
                 if(!this.knowsTile(el.x, el.y)){
-                    this._discoveredTiles.push(el);
+                    PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].push(el);
                 }
             }
         }else if(PD.FOW.Params.playerViewShape==1){       //Square
-            if(PD.FOV==undefined || PD.FOV._mapHeight!=$gameMap.height || PD.FOV._mapWidth!=$gameMap.width){
+            if(PD.FOV==undefined || PD.FOV._mapHeight!=$gameMap.height || PD.FOV._mapWidth!=$gameMap.width || PD.FOV._depth!=$gameMap._dungeonGenerator._depth){
                 var isTransparentFunc=function(x, y){
                     return !PD.FOW.isOccluderTile(x, y);
                 };
                 PD.FOV= new PermissiveFov($gameMap.width, $gameMap.height, isTransparentFunc);
+                PD.FOV._depth=$gameMap._dungeonGenerator._depth;
             }
             var slf=this;
             PD.FOV.compute(orX,orY,this._viewRange,function(x, y){
@@ -393,7 +371,7 @@ Game_CharacterBase.prototype.updateFOW = function() {
                     PD.FOW.clearFogTile(x, y);
                     slf._visibleTiles.push({x:x, y:y});
                     if(!slf.knowsTile(x, y)){
-                        slf._discoveredTiles.push({x:x, y:y});
+                        PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].push({x:x, y:y});
                     } 
                 }
             });
@@ -404,7 +382,6 @@ PD.Aliases.Game_CharacterBase.initialize = Game_CharacterBase.prototype.initiali
 Game_CharacterBase.prototype.initialize = function() {
     PD.Aliases.Game_CharacterBase.initialize.call(this);
     this._visibleTiles=[];
-    this._discoveredTiles=[];
     this._FOW_oldX=0;
     this._FOW_oldY=0;
     this._viewRange=0;
@@ -421,12 +398,15 @@ Game_CharacterBase.prototype.canSeeTile = function(x, y) {
     }).length>0;
 };
 Game_CharacterBase.prototype.knowsTile = function(x, y) {
-    if(!$gameMap.hasGeneratedDungeon()){
-        return true;
+    if(this.constructor===Game_Player){
+        if(!$gameMap.hasGeneratedDungeon()){
+            return true;
+        }
+        return PD.Dungeon._discoveredTiles[$gameMap._dungeonGenerator._depth].filter(function(itm){
+            return itm.x==x && itm.y==y;
+        }).length>0;  
     }
-    return this._discoveredTiles.filter(function(itm){
-        return itm.x==x && itm.y==y;
-    }).length>0;
+    return true;
 };
 Game_CharacterBase.prototype.canSeeCharacter = function(char) {
     if(!$gameMap.hasGeneratedDungeon()){

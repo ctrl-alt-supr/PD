@@ -56,18 +56,18 @@ Window_PDUI.prototype.createActionBar = function() {
     this.addChild(this._actionBar);
 };
 Window_PDUI.prototype.createButtons = function() {
-    this._btnOptions = new Sprite_Button();
+    SceneManager._scene._PDButtons=[];
+    this._btnOptions = new PD_SpriteButton();
     this._btnOptions.setClickHandler(this.buttonOptionsHandler.bind(this));
+
     this.addChild(this._btnOptions);
+    SceneManager._scene._PDButtons.push(this._btnOptions);
 };
 Window_PDUI.prototype.buttonOptionsHandler=function(){
-    $gameTemp._interactingWithSDUI=true;
-    console.log("Options!");
-    
+    SceneManager.push(Scene_PDOptions);
 }
 Window_PDUI.prototype.start = function() {
     this.updatePositions();
-    $gameTemp._interactingWithSDUI=false;
 };
 
 Window_PDUI.prototype.updatePositions=function(){
@@ -78,8 +78,8 @@ Window_PDUI.prototype.updatePositions=function(){
     this._actionBar.x=Graphics.boxWidth-this._actionBar_bitmap.width;
     this._btnOptions.width=36;
     this._btnOptions.height=36;
-    this._btnOptions.y=0;
-    this._btnOptions.x=Graphics.width-42;
+    this._btnOptions.y=9;
+    this._btnOptions.x=Graphics.boxWidth-this._btnOptions.width-7;
 }
 
 Window_PDUI.prototype.windowWidth = function() {
@@ -123,8 +123,3 @@ Scene_Map.prototype.createSDUI= function() {
     this.addChild(this._PDUI);
     this._PDUI.close();
 }
-Game_Temp.prototype._interactingWithSDUI=false;
-Game_Temp.prototype.setDestination = function(x, y) {
-    this._destinationX = x;
-    this._destinationY = y;
-};

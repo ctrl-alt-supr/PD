@@ -138,6 +138,8 @@ Scene_Title.prototype.create=function(){
 
 PD.ParseDungeonSaveContents=function(contents){
     PD.Dungeon.reset();
+    PD.Dungeon.lastCurrentDepth=contents.lastCurrentDepth;
+    PD.Dungeon._discoveredTiles=contents.discoveredTiles;
     for (var lvlIndx = 0; lvlIndx < contents.levels.length; lvlIndx++) {
         var genLevl = contents.levels[lvlIndx];
         if(genLevl==undefined || genLevl==null){
@@ -183,6 +185,8 @@ PD.MakeDungeonSaveContents=function(){
         _generator:null,
     };
     var contents={};
+    contents.lastCurrentDepth=PD.Dungeon.lastCurrentDepth;
+    contents.discoveredTiles=PD.Dungeon._discoveredTiles;
     contents.levels=[];
     for (var lvlIndx = 0; lvlIndx < PD.Dungeon._levels.length; lvlIndx++) {
         var genLevl = PD.Dungeon._levels[lvlIndx];

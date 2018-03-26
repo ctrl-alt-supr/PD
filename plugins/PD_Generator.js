@@ -638,18 +638,32 @@ if(isInMV && PluginManager!=undefined){
                 this._pathFindingFinder=new PF.AStarFinder();
             }
             this.setupTileEvents();
-            $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._entrancePoint.x, this._dungeonGenerator._entrancePoint.y, $gamePlayer.direction(), 2);
+            var startPosType=PD.Dungeon.startPosType();
+            if(startPosType==PD.Dungeon.StartPosition.EXIT){
+                $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._exitPoint.x, this._dungeonGenerator._exitPoint.y, $gamePlayer.direction(), 2);
+            }else if(startPosType==PD.Dungeon.StartPosition.PIT){
+                
+            }else if(startPosType==PD.Dungeon.StartPosition.RANDOM){
+                
+            }else if(startPosType==PD.Dungeon.StartPosition.CUSTOM){
+                var startPos=PD.Dungeon.startPos();
+                if(startPos!=undefined && startPos!=null){
+                    if($gameMap.isValid(startPos.x, startPos.y)){
+                        $gamePlayer.reserveTransfer(this.mapId(),startPos.x, startPos.y, $gamePlayer.direction(), 2);
+                    }else{      //If the custom position is invalid, we teleport to the entrance as a fallback
+                        $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._entrancePoint.x, this._dungeonGenerator._entrancePoint.y, $gamePlayer.direction(), 2);
+                    }
+                }
+            }else{
+                $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._entrancePoint.x, this._dungeonGenerator._entrancePoint.y, $gamePlayer.direction(), 2);
+            }
         }
     }
-    // PD.Generator.Aliases.Game_Player=PD.Generator.Aliases.Game_Player||{};
-    // PD.Generator.Aliases.Game_Player.performTransfer=Game_Player.prototype.performTransfer;
-    // Game_Player.prototype.performTransfer=function(){
-    //     PD.Generator.Aliases.Game_Player.performTransfer.call(this);
-    //     for (var tileEventIndex = 0; tileEventIndex < $gameMap._tileEvents.length; tileEventIndex++) {
-    //         var te = $gameMap._tileEvents[tileEventIndex];
-    //         te.checkTileNameComment();
-    //     }
-    // }
+    PD.Generator.Aliases.Game_Player=PD.Generator.Aliases.Game_Player||{};
+    PD.Generator.Aliases.Game_Player.performTransfer=Game_Player.prototype.performTransfer;
+    Game_Player.prototype.performTransfer=function(){
+        PD.Generator.Aliases.Game_Player.performTransfer.call(this);
+    }
     Game_Map.prototype.getTileEventDBData=function(pdTileID){
         var tlEventId=PD.Tiles.tile_EventId(pdTileID);
         if(tlEventId<=0) return null;
@@ -705,26 +719,19 @@ if(isInMV && PluginManager!=undefined){
         if(regexMatch){
             var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
             this._dungeonOptions={};
-            for(var propertyName in PD.Generator.Dungeon.Defaults) {
+            var defOpts={
+                depth:1
+            };
+            for(var propertyName in defOpts) {
                 if(dp.documentElement.attributes[propertyName]!=null){
                     if(propertyName=="wallHeight"){
                         var splitVal=dp.documentElement.attributes[propertyName].value.split(",");
                         this._dungeonOptions[propertyName]={2:Number(splitVal[0]), 4:Number(splitVal[1]), 6:Number(splitVal[2]), 8:Number(splitVal[3])};
-                    }else if(propertyName=="maxRooms"){
+                    }else if(propertyName=="depth"){
                         this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
-                    }else if(propertyName=="maxCorridors"){
-                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
-                    }else if(propertyName=="roomChance"){
-                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
-                    }else if(propertyName=="customFeatureChance"){
-                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
-                    }else if(propertyName=="maxFeatures"){
-                        this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
-                    }else{
-                        this._dungeonOptions[propertyName]=dp.documentElement.attributes[propertyName].value;
                     }
                 }else{
-                    this._dungeonOptions[propertyName]=PD.Generator.Dungeon.Defaults[propertyName];
+                    this._dungeonOptions[propertyName]=defOpts[propertyName];
                 }
             }
             toReturn= this._dungeonOptions;//Object.assign(defOpts, temporalAttrs);
@@ -735,7 +742,7 @@ if(isInMV && PluginManager!=undefined){
     Game_Map.prototype.generateDungeon=function(){
         //var lasOpts=Object.assign(this._dungeonOptions, {width:$gameMap.width(), height:$gameMap.height()});
         //this._dungeonGenerator=new PD.Generator.Dungeon(lasOpts);
-        this._dungeonLevel=PD.Dungeon.prepareDepthLevel(1);
+        this._dungeonLevel=PD.Dungeon.prepareDepthLevel(this._dungeonOptions.depth);
         this._dungeonGenerator=this._dungeonLevel.generator();
         //this._dungeonGenerator.generate();
         this._hasGeneratedDungeon=true;
