@@ -124,8 +124,8 @@ Game_Player.prototype.performTransfer = function() {
             if($gameMap.hasGeneratedDungeon()){
                 var startPosType=PD.Dungeon.startPosType();
                 if(startPosType==PD.Dungeon.StartPosition.EXIT){
-                    this._newX=this._dungeonGenerator._exitPoint.x;
-                    this._newY=this._dungeonGenerator._exitPoint.y;
+                    this._newX=$gameMap._dungeonGenerator._exitPoint.x;
+                    this._newY=$gameMap._dungeonGenerator._exitPoint.y;
                 }else if(startPosType==PD.Dungeon.StartPosition.PIT){
                     
                 }else if(startPosType==PD.Dungeon.StartPosition.RANDOM){
@@ -137,13 +137,13 @@ Game_Player.prototype.performTransfer = function() {
                             this._newX=startPos.x;
                             this._newY=startPos.y;
                         }else{      //If the custom position is invalid, we teleport to the entrance as a fallback
-                            this._newX=this._dungeonGenerator._entrancePoint.x;
-                            this._newY=this._dungeonGenerator._entrancePoint.y;
+                            this._newX=$gameMap._dungeonGenerator._entrancePoint.x;
+                            this._newY=$gameMap._dungeonGenerator._entrancePoint.y;
                         }
                     }
                 }else{
-                    this._newX=this._dungeonGenerator._entrancePoint.x;
-                    this._newY=this._dungeonGenerator._entrancePoint.y;
+                    this._newX=$gameMap._dungeonGenerator._entrancePoint.x;
+                    this._newY=$gameMap._dungeonGenerator._entrancePoint.y;
                 }    
             }
         }
