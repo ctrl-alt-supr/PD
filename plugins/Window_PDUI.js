@@ -31,6 +31,7 @@ Window_PDUI.prototype.initialize = function(x, y) {
     this.setBackgroundType(2);
     this.createButtons();
     this.updatePositions();
+    this.updateVisibility();
 };
 
 Window_PDUI.prototype.createStatusBar = function() {
@@ -59,17 +60,35 @@ Window_PDUI.prototype.createButtons = function() {
     SceneManager._scene._PDButtons=[];
     this._btnOptions = new PD_SpriteButton();
     this._btnOptions.setClickHandler(this.buttonOptionsHandler.bind(this));
-
     this.addChild(this._btnOptions);
     SceneManager._scene._PDButtons.push(this._btnOptions);
+
+    this._btnBackpack = new PD_SpriteButton();
+    this._btnBackpack.setClickHandler(this.buttonBackpackHandler.bind(this));
+    this.addChild(this._btnBackpack);
+    SceneManager._scene._PDButtons.push(this._btnBackpack);
+    
 };
 Window_PDUI.prototype.buttonOptionsHandler=function(){
+    SoundManager.playCursor();
     SceneManager.push(Scene_PDOptions);
+}
+Window_PDUI.prototype.buttonBackpackHandler=function(){
+    SoundManager.playCursor();
+    SceneManager.push(Scene_PDInventory);
 }
 Window_PDUI.prototype.start = function() {
     this.updatePositions();
 };
-
+Window_PDUI.prototype.updateVisibility=function(){
+     if($gameMap.hasGeneratedDungeon()){
+         if(!this.isOpen() && !this.isOpening()){
+            this.open();
+        }
+     }else{ 
+         this.close();
+     }
+}
 Window_PDUI.prototype.updatePositions=function(){
     this._statusRight.x=Graphics.boxWidth-this._statusRight_bitmap.width;
     this._statusMiddle.move(this._statusLeft_bitmap.width,0,Graphics.width-this._statusRight_bitmap.width, this._statusMiddle_bitmap.height);
@@ -80,6 +99,11 @@ Window_PDUI.prototype.updatePositions=function(){
     this._btnOptions.height=36;
     this._btnOptions.y=9;
     this._btnOptions.x=Graphics.boxWidth-this._btnOptions.width-7;
+
+    this._btnBackpack.width=68;
+    this._btnBackpack.height=72;
+    this._btnBackpack.y=this.height-this._btnBackpack.height;
+    this._btnBackpack.x=this.width-(this._btnBackpack.height*3)+(this._btnBackpack.width/4);
 }
 
 Window_PDUI.prototype.windowWidth = function() {
@@ -103,10 +127,10 @@ Window_PDUI.prototype.open = function() {
 
 Window_PDUI.prototype.update = function() {
     Window_Base.prototype.update.call(this);
-    if(!this.isOpening() && !this.isOpen()){
-        this.open();
-        this.refresh();
-    }
+     if(!this.isOpening() && !this.isOpen()){
+         this.open();
+         this.refresh();
+     }
 };
 
 
@@ -116,10 +140,12 @@ PD.Aliases.Scene_Map=PD.Aliases.Scene_Map||{};
 PD.Aliases.Scene_Map.createDisplayObjects=Scene_Map.prototype.createDisplayObjects;
 Scene_Map.prototype.createDisplayObjects = function() {
     PD.Aliases.Scene_Map.createDisplayObjects.call(this);
-    this.createSDUI();
+    this.createPDUI();
 };
-Scene_Map.prototype.createSDUI= function() {
+Scene_Map.prototype.createPDUI= function() {
     this._PDUI=new Window_PDUI();
+   
     this.addChild(this._PDUI);
     this._PDUI.close();
+   
 }

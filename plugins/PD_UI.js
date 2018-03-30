@@ -401,6 +401,45 @@ Scene_Base.prototype.initialize = function() {
 PD.Aliases.Game_Temp=PD.Aliases.Game_Temp||{};
 PD.Aliases.Game_Temp.setDestination=Game_Temp.prototype.setDestination;
 Game_Temp.prototype.setDestination = function(x, y) {
-	if (PD_SpriteButton.onButton()) return;
+	if (!PD.UI.touchInputActiveForCurrentPosition()) return;
     PD.Aliases.Game_Temp.setDestination.call(this,x,y);
+};
+PD=PD||{};
+PD.UI=PD.UI||{};
+PD.UI._touchInputInactiveRects=[];
+PD.UI._inactiveRectIndex=function(rectToFind){
+    var match=-1;
+    for (var tiiri = 0; tiiri < PD.UI._touchInputInactiveRects.length; tiiri++) {
+        var tiir = PD.UI._touchInputInactiveRects[tiiri];
+        if(tiir.x==rectToFind.x && tiir.y==rectToFind.y && tiir.width==rectToFind.width && tiir.height==rectToFind.height){
+            match=tiiri;
+            return match;
+        }
+    }
+    return match;
+}
+PD.UI.addInactiveRect=function(rectToMakeInactive){
+    if(PD.UI._inactiveRectIndex(rectToMakeInactive)==-1){
+        PD.UI._touchInputInactiveRects.push(rectToMakeInactive);
+    }
+}
+PD.UI.removeInactiveRect=function(rectToMakeActive){
+    var found=PD.UI._inactiveRectIndex(rectToMakeActive);
+    if(found>-1){
+        PD.UI._touchInputInactiveRects.splice(found, 1);
+    }
+}
+PD.UI.touchInputActiveForCurrentPosition = function() {
+    var x = TouchInput.x;
+	var y = TouchInput.y;
+	var inactiveRects = PD.UI._touchInputInactiveRects;
+	if (!inactiveRects) return false;
+	var result = false;
+	for (var i = 0; i < inactiveRects.length; i++) {
+		if (inactiveRects[i] && x > inactiveRects[i].x && x < inactiveRects[i].x + inactiveRects[i].width && y > inactiveRects[i].y && y < inactiveRects[i].y + inactiveRects[i].height) {
+			result = true;
+			break;
+		};
+	}
+	return (!PD_SpriteButton.onButton() && !result);
 };

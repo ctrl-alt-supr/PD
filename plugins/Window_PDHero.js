@@ -94,6 +94,8 @@ Scene_ChooseHero.prototype.scrollBackgroundB=function(){
 }
 
 Scene_ChooseHero.prototype.commandNewGame = function() {
+    PD.Hero.reset();
+    PD.Hero.class=this._heroList.index();
     DataManager.setupNewGame();
     PD.Dungeon.reset();
     this._playCommands.close();

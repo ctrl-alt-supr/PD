@@ -637,7 +637,7 @@ if(isInMV && PluginManager!=undefined){
             if(this.createPathfinder!=undefined){
                 this._pathFindingFinder=new PF.AStarFinder();
             }
-            this.setupTileEvents();
+            this.setupInteractiveTileEvents();
             var startPosType=PD.Dungeon.startPosType();
             if(startPosType==PD.Dungeon.StartPosition.EXIT){
                 $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._exitPoint.x, this._dungeonGenerator._exitPoint.y, $gamePlayer.direction(), 2);
@@ -680,8 +680,8 @@ if(isInMV && PluginManager!=undefined){
         var lD=PD.Tiles.tile_EventLocalD(pdTileID);
         return [lA, lB,lC,lD];
     }
-    Game_Map.prototype.setupTileEvents = function() {
-        this._tileEvents = [];
+    Game_Map.prototype.setupInteractiveTileEvents = function() {
+        this._InteractiveTileEvents = [];
         for (var y = 0; y < this.height(); y++) {
             for (var x = 0; x < this.width(); x++) {
                 var genTileId=this._dungeonGenerator.getTileId(x, y);
@@ -694,13 +694,29 @@ if(isInMV && PluginManager!=undefined){
                     $gameSelfSwitches.setValue([this._mapId,this._events.length,"C"],lts[2]);
                     $gameSelfSwitches.setValue([this._mapId,this._events.length,"D"],lts[3]);
                     this._events.push(new Game_TileEvent(this._mapId, x, y, tlEventId, eventDBData, this._events.length));
-                    this._tileEvents.push(this._events[this._events.length-1]);
+                    this._InteractiveTileEvents.push(this._events[this._events.length-1]);
                 }
             }
         }
         this.refreshTileEvents();
     };
-
+    // Game_Map.prototype.checkPassage = function(x, y, bit) {
+    //     var flags = this.tilesetFlags();
+    //     var tiles = this.allTiles(x, y);
+    //     for (var i = 0; i < tiles.length; i++) {
+    //         var flag = flags[tiles[i]];
+    //         if(flag==undefined || flag==null){
+    //             continue;
+    //         }
+    //         if ((flag & 0x10) !== 0)  // [*] No effect on passage
+    //             continue;
+    //         if ((flag & bit) === 0)   // [o] Passable
+    //             return true;
+    //         if ((flag & bit) === bit) // [x] Impassable
+    //             return false;
+    //     }
+    //     return true;
+    // };
     Game_Map.prototype.shouldGenerateDungeon=function(){
         if(this.parseDungeonNotetag($dataMap.note)!=null){
             return true;
@@ -774,7 +790,7 @@ if(isInMV && PluginManager!=undefined){
             var tId=this._dungeonGenerator.getTileId(x, y);
             return tId!=3; //&& tId!=4;
         }else{
-            return PD.Generator.Aliases.Game_Map.isPassable.call(this, x, y, d);
+            return this.checkPassage(x, y, (1 << (d / 2 - 1)) & 0x0f);//PD.Generator.Aliases.Game_Map.isPassable.call(this, x, y, d);
         }
     };
     PD.Generator.Aliases.Game_Map.data=Game_Map.prototype.data;

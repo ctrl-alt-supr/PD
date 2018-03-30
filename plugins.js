@@ -11,6 +11,7 @@ var $plugins =
 {"name":"PD_UI","status":true,"description":"C6 - Templates for some commonly used user interface elements.","parameters":{}},
 {"name":"PD_FOW_FOV","status":true,"description":"C7 - Implements the fog of war (FOW) and field of view (FOV) code the engine.","parameters":{"fowHeader":"","playerViewRange":"3","playerViewShape":"1","fogFadeSpeed":"0.1","fogOpacity":"1","fogDiscover":"true","fogDiscoveredOpacity":"0.5","fogShowEventsInDiscovered":"false","fogTileOcclusion":"[\"3\"]"}},
 {"name":"PD_Pathfinding","status":true,"description":"C8 - Allows characters to calculate movement routes without getting stuck.","parameters":{}},
+{"name":"PD_Hero","status":true,"description":"","parameters":{}},
 {"name":"======GENERATOR==========================================","status":false,"description":"","parameters":{}},
 {"name":"PD_Generator","status":true,"description":"G1 - Generates dungeon levels during runtime.","parameters":{"defaultsHeader":"","defaultTileMappings":"[\"{\\\"DungeonId\\\":\\\"1\\\",\\\"RpgmId\\\":\\\"1\\\"}\",\"{\\\"DungeonId\\\":\\\"2\\\",\\\"RpgmId\\\":\\\"30\\\"}\",\"{\\\"DungeonId\\\":\\\"3\\\",\\\"RpgmId\\\":\\\"4\\\"}\",\"{\\\"DungeonId\\\":\\\"4\\\",\\\"RpgmId\\\":\\\"5\\\"}\",\"{\\\"DungeonId\\\":\\\"5\\\",\\\"RpgmId\\\":\\\"7\\\"}\",\"{\\\"DungeonId\\\":\\\"6\\\",\\\"RpgmId\\\":\\\"24\\\"}\"]","tilesetsHeader":"","perTilesetTileMappings":"[]"}},
 {"name":"PD_GeneratorRect","status":true,"description":"G2 - Classes representing rectangles and points required by the generator","parameters":{}},
@@ -24,10 +25,12 @@ var $plugins =
 {"name":"PD_Painter_WeakFloor","status":true,"description":"","parameters":{}},
 {"name":"PD_Painter_Simple","status":true,"description":"","parameters":{}},
 {"name":"======UI=================================================","status":false,"description":"","parameters":{}},
+{"name":"PD_Poses","status":true,"description":"","parameters":{}},
 {"name":"Window_PDTitle","status":true,"description":"The Title screen.","parameters":{}},
 {"name":"Window_PDOptions","status":true,"description":"The Options screen.","parameters":{}},
 {"name":"Window_PDHero","status":true,"description":"The Choose Hero screen.","parameters":{}},
 {"name":"Window_PDCredits","status":true,"description":"The Credits screen.","parameters":{}},
 {"name":"Window_PDBadges","status":true,"description":"The Badges screen.","parameters":{}},
-{"name":"Window_PDUI","status":true,"description":"The panels that are shown over the game map while playing.","parameters":{}}
+{"name":"Window_PDUI","status":true,"description":"The panels that are shown over the game map while playing.","parameters":{}},
+{"name":"Window_PDInventory","status":true,"description":"The panels that are shown over the game map while playing.","parameters":{}}
 ];
