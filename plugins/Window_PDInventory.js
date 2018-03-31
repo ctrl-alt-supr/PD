@@ -534,20 +534,20 @@ Window_PDInventoryList.prototype.drawPDItem = function(item, x, y, width) {
         var iconBoxWidth = Window_Base._iconWidth;
         this.resetTextColor();
         //this.
-        this.drawIcon(item.iconIndex, x + iconBoxWidth/2 , y + iconBoxWidth/2 );
+        var idisplaydata=PD.Item.itemDisplayData(item);
+        this.drawIcon(idisplaydata.icon, x + iconBoxWidth/2 , y + iconBoxWidth/2 );
         this.contents.fontSize=16;
         this.contents.outlineWidth=5;
         if(DataManager.isWeapon(item) || DataManager.isArmor(item)){
             //console.log(item);
             this.drawText(":"+item.params[4], x+width-25, y-5, 20, 'right');
         }else{
+            
             var numOf=$gameParty.numItems(item);
             if(numOf>1){
                 this.drawText(numOf, x+3, y-5, 20, 'left');
             }
         }
-        
-        
         //this.drawText(item.name, x + iconBoxWidth, y, width - iconBoxWidth);
     }
 };

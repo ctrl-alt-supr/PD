@@ -174,6 +174,36 @@ PD.Item.generatePotionKnowledge=function(){
     return toRet;
 }
 
+PD.Item.itemDisplayData=function(item){
+    if(!PD.Item.isWeapon() && !PD.Item.isArmor()){
+        if(PD.Item.isScroll(item)){
+            var itemIdToDisplay=item.id;
+            if(PD.Dungeon._knownScrolls.indexOf(item.id)==-1) itemIdToDisplay=PD.Dungeon.ScrollKnowledge[item.id];
+            return {
+                name:$dataItems[itemIdToDisplay].name,
+                description:$dataItems[itemIdToDisplay].description,
+                icon:$dataItems[itemIdToDisplay],
+                itemid:itemIdToDisplay
+            }
+        }else if(PD.Item.isPotion(item)){
+            var itemIdToDisplay=item.id;
+            if(PD.Dungeon._knownPotions.indexOf(item.id)==-1) itemIdToDisplay=PD.Dungeon.PotionKnowledge[item.id];
+            return {
+                name:$dataItems[itemIdToDisplay].name,
+                description:$dataItems[itemIdToDisplay].description,
+                icon:$dataItems[itemIdToDisplay].iconIndex,
+                itemid:itemIdToDisplay
+            }
+        }
+    }
+    return {
+        name:item.name,
+        description:item.description,
+        icon:item.iconIndex,
+        itemid:item.id
+    }
+}
+
 PD.Item.generateScrollKnowledge=function(){
     var toRet={};
     var usedUnidentified=[];
