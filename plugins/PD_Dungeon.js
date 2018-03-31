@@ -15,11 +15,29 @@ PD.Dungeon.reset=function() {
     PD.Dungeon._discoveredTiles=[];
     PD.Dungeon._levels=[];
     PD.Dungeon._startPosType=PD.Dungeon.StartPosition.ENTRANCE;
+    PD.Dungeon.PotionKnowledge={};
+    PD.Dungeon._knownPotions=[];
+    PD.Dungeon.ScrollKnowledge={};
+    PD.Dungeon._knownScrolls=[];
+    PD.Dungeon.RingKnowledge={};
+    PD.Dungeon._knownRings=[];
+    PD.Dungeon.WandKnowledge={};
+    PD.Dungeon._knownWands=[];
     PD.Dungeon._startPos=new PD.Generator.Dungeon.Point();
+    PD.Dungeon.PotionKnowledge=PD.Item.generatePotionKnowledge();
+    PD.Dungeon.ScrollKnowledge=PD.Item.generateScrollKnowledge();
     PD.Dungeon.lastCurrentDepth=0;
 }
 
-PD.Dungeon._levels=[];
+DataManager.setupNewGame = function() {
+    this.createGameObjects();
+    this.selectSavefileForNewGame();
+    $gameParty.setupStartingMembers();
+    $gamePlayer.reserveTransfer($dataSystem.startMapId,
+        $dataSystem.startX, $dataSystem.startY);
+    Graphics.frameCount = 0;
+};
+
 PD.Dungeon.level=function(depth){
     if(this._levels[depth]!=undefined && this._levels[depth]!=null){
         return this._levels[depth];
@@ -115,6 +133,7 @@ PD.Dungeon.setStartPosType=function(nType, nPoint){
         PD.Dungeon._startPos=nPoint;
     }
 }
+//Contains key value pairs of the ids of the known and unknown potion
 
 Game_Player.prototype.performTransfer = function() {
     if (this.isTransferring()) {
@@ -156,6 +175,5 @@ Game_Player.prototype.performTransfer = function() {
         this.clearTransferInfo();
     }
 };
-
 
 

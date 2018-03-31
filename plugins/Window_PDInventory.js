@@ -58,7 +58,7 @@ Scene_PDInventory.prototype.onTabChanged=function(oldTabId, oldType, newTabId, n
     if(newType==0){
         this._PDInventory.setTitle("BACKPACK");
     }else if(newType==1){
-        this._PDInventory.setTitle("KEYRING");
+        this._PDInventory.setTitle("KEY RING");
     }else if(newType==2){
         this._PDInventory.setTitle("SEED POUCH");
     }else if(newType==3){
@@ -110,10 +110,10 @@ Window_PDInventory.prototype.initialize = function(x, y) {
     this.updatePositions();
     this._currentTab=0;
     this._lastTab=-1;
-    this._lastHasKeyRing=false;
-    this._lastHasSeedPouch=false;
-    this._lastHasScrollHolder=false;
-    this._lastHasWandHolster=false;
+    this._lastHasKeyRing=null;
+    this._lastHasSeedPouch=null;
+    this._lastHasScrollHolder=null;
+    this._lastHasWandHolster=null;
     this._hasKeyRing=false;
     this._hasSeedPouch=false;
     this._hasScrollHolder=false;
@@ -131,37 +131,24 @@ Window_PDInventory.prototype.setOnTabChanged=function(newFunc){
     this._onTabChanged=newFunc;
 }
 Window_PDInventory.prototype.tab2Type=function(tabId){
+    var tabsInUse=[null];
+    if(this._hasKeyRing){
+        tabsInUse.push(PD.Item.BagType.KEYRING);
+    }
+    if(this._hasSeedPouch){
+        tabsInUse.push(PD.Item.BagType.SEEDPOUCH);
+    }
+    if(this._hasScrollHolder){
+        tabsInUse.push(PD.Item.BagType.SCROLLHOLDER);
+    }
+    if(this._hasWandHolster){
+        tabsInUse.push(PD.Item.BagType.WANDHOLSTER);
+    }
     if(tabId==0){
-        return PD.Hero.InventoryBagType.BACKPACK;
+        return PD.Item.BagType.BACKPACK;
     }else if(tabId<=4){
-        if(tabId==1){
-            if(this._hasKeyRing){
-                return PD.Hero.InventoryBagType.KEYRING;
-            }else if(this._hasSeedPouch){
-                return PD.Hero.InventoryBagType.SEEDPOUCH;
-            }else if(this._hasScrollHolder){
-                return PD.Hero.InventoryBagType.SCROLLHOLDER;
-            }else if(this._hasWandHolster){
-                return PD.Hero.InventoryBagType.WANDHOLSTER;
-            }
-        }else if(tabId==2){
-            if(this._hasSeedPouch){
-                return PD.Hero.InventoryBagType.SEEDPOUCH;
-            }else if(this._hasScrollHolder){
-                return PD.Hero.InventoryBagType.SCROLLHOLDER;
-            }else if(this._hasWandHolster){
-                return PD.Hero.InventoryBagType.WANDHOLSTER;
-            }
-        }else if(tabId==3){
-            if(this._hasScrollHolder){
-                return PD.Hero.InventoryBagType.SCROLLHOLDER;
-            }else if(this._hasWandHolster){
-                return PD.Hero.InventoryBagType.WANDHOLSTER;
-            }
-        }else if(tabId==4){
-            if(this._hasWandHolster){
-                return PD.Hero.InventoryBagType.WANDHOLSTER;
-            }
+        if(tabId<tabsInUse.length){
+            return tabsInUse[tabId];
         }
     }
     return null;
@@ -185,17 +172,18 @@ Window_PDInventory.prototype.InventoryBagType2IconBitmap=function(bt){
 }
 
 Window_PDInventory.prototype.updateTab2BagMappings=function(){
+    var isInit=(this._lastHasKeyRing==null);
     this._lastHasKeyRing=this._hasKeyRing;
     this._lastHasSeedPouch=this._hasSeedPouch;
     this._lastHasScrollHolder=this._hasScrollHolder;
     this._lastHasWandHolster=this._hasWandHolster;
 
-    this._hasKeyRing=PD.Hero.hasBag(PD.Hero.InventoryBagType.KEYRING);
-    this._hasSeedPouch=PD.Hero.hasBag(PD.Hero.InventoryBagType.SEEDPOUCH);
-    this._hasScrollHolder=PD.Hero.hasBag(PD.Hero.InventoryBagType.SCROLLHOLDER);
-    this._hasWandHolster=PD.Hero.hasBag(PD.Hero.InventoryBagType.WANDHOLSTER);
+    this._hasKeyRing=PD.Hero.isBagAvailable(PD.Item.BagType.KEYRING);
+    this._hasSeedPouch=PD.Hero.isBagAvailable(PD.Item.BagType.SEEDPOUCH);
+    this._hasScrollHolder=PD.Hero.isBagAvailable(PD.Item.BagType.SCROLLHOLDER);
+    this._hasWandHolster=PD.Hero.isBagAvailable(PD.Item.BagType.WANDHOLSTER);
 
-    if(this._lastHasKeyRing!=this._hasKeyRing || this._lastHasSeedPouch!=this._hasSeedPouch || this._lastHasScrollHolder!=this._hasScrollHolder || this._hasWandHolster!=this._lastHasWandHolster){
+    if(isInit || this._lastHasKeyRing!=this._hasKeyRing || this._lastHasSeedPouch!=this._hasSeedPouch || this._lastHasScrollHolder!=this._hasScrollHolder || this._hasWandHolster!=this._lastHasWandHolster){
         for (var index = 0; index < 5; index++) {
             var ss=this.shouldShowTab(index);
             if(ss){
@@ -230,15 +218,15 @@ Window_PDInventory.prototype.setTab=function(tabId){
 Window_PDInventory.prototype.preloadImages=function(){
     this._bgTop_bitmap=ImageManager.loadSystem("PD_InventoryTop");
     this._tab0_bitmap=ImageManager.loadSystem("PD_InventoryTab0");
-    this._BACKPACK_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Hero.InventoryBagType.BACKPACK));
+    this._BACKPACK_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Item.BagType.BACKPACK));
     this._tab1_bitmap=ImageManager.loadSystem("PD_InventoryTab1");
-    this._KEYRING_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Hero.InventoryBagType.KEYRING));
+    this._KEYRING_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Item.BagType.KEYRING));
     this._tab2_bitmap=ImageManager.loadSystem("PD_InventoryTab2");
-    this._SEEDPOUCH_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Hero.InventoryBagType.SEEDPOUCH));
+    this._SEEDPOUCH_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Item.BagType.SEEDPOUCH));
     this._tab3_bitmap=ImageManager.loadSystem("PD_InventoryTab3");
-    this._SCROLLHOLDER_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Hero.InventoryBagType.SCROLLHOLDER));
+    this._SCROLLHOLDER_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Item.BagType.SCROLLHOLDER));
     this._tab4_bitmap=ImageManager.loadSystem("PD_InventoryTab4");
-    this._WANDHOLSTER_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Hero.InventoryBagType.WANDHOLSTER));
+    this._WANDHOLSTER_icon_bitmap=ImageManager.loadSystem(Window_PDInventory.InventoryBagType2Icon(PD.Item.BagType.WANDHOLSTER));
 }
 
 Window_PDInventory.prototype.shouldShowTab=function(tabId){
@@ -370,7 +358,7 @@ Window_PDInventoryList.prototype.initialize = function(x, y, width, height) {
     this._itemBG_act_bitmap=ImageManager.loadSystem("PD_InventoryItem_act");
     this._itemEquipBG_act_bitmap=ImageManager.loadSystem("PD_InventoryItem_Equipment_act");
     this._category = 'item';
-    this._mode = PD.Hero.InventoryBagType.BACKPACK;
+    this._mode = PD.Item.BagType.BACKPACK;
     this._data = [];
     this.padding=20;
     this.setBackgroundType(2);
@@ -430,7 +418,7 @@ Window_PDInventoryList.prototype.itemHeight = function() {
 };
 
 Window_PDInventoryList.prototype.maxItems = function() {
-    return 4+PD.Hero.bagSize(this._mode);
+    return 4+PD.Item.bagSize(this._mode);
     //return 24;//this._data ? this._data.length : 1;
 };
 
@@ -443,19 +431,36 @@ Window_PDInventoryList.prototype.isCurrentItemEnabled = function() {
     return this.isEnabled(this.item());
 };
 
+// Window_PDInventoryList.prototype.includes = function(item) {
+//     switch (this._category) {
+//     case 'item':
+//         return DataManager.isItem(item) && item.itypeId === 1;
+//     case 'weapon':
+//         return DataManager.isWeapon(item);
+//     case 'armor':
+//         return DataManager.isArmor(item);
+//     case 'keyItem':
+//         return DataManager.isItem(item) && item.itypeId === 2;
+//     default:
+//         return false;
+//     }
+// };
 Window_PDInventoryList.prototype.includes = function(item) {
-    switch (this._category) {
-    case 'item':
-        return DataManager.isItem(item) && item.itypeId === 1;
-    case 'weapon':
-        return DataManager.isWeapon(item);
-    case 'armor':
-        return DataManager.isArmor(item);
-    case 'keyItem':
-        return DataManager.isItem(item) && item.itypeId === 2;
-    default:
-        return false;
-    }
+    return true;
+    // switch (this._mode) {
+    // case PD.Item.BagType.BACKPACK:
+    //     return true;
+    // case PD.Item.BagType.KEYRING:
+    //     return item.typeId == 1;
+    // case PD.Item.BagType.SEEDPOUCH:
+    //     return PD.Item.isSeed(item);
+    // case PD.Item.BagType.SCROLLHOLDER:
+    //     return PD.Item.isScroll(item);
+    // case PD.Item.BagType.WANDHOLSTER:
+    //     return PD.Item.isFood(item);
+    // default:
+    //     return false;
+    // }
 };
 
 Window_PDInventoryList.prototype.needsNumber = function() {
@@ -467,11 +472,23 @@ Window_PDInventoryList.prototype.isEnabled = function(item) {
 };
 
 Window_PDInventoryList.prototype.makeItemList = function() {
-    this._data = $gameParty.allItems().filter(function(item) {
-        return this.includes(item);
-    }, this);
-    if (this.includes(null)) {
-        this._data.push(null);
+    
+    this._data=[];
+    var equipped=$gameParty.leader().equips();
+    for (var index = 0; index < equipped.length; index++) {
+        var element = equipped[index];
+        if(element!=null && element!=undefined){
+            this._data.push(element);
+        }else{
+            this._data.push(null);
+        }
+    }
+    var allItems=$gameParty.allItems(this._mode);
+    for (var index = 0; index < allItems.length; index++) {
+        var element = allItems[index];
+        if(this.includes(element)){
+            this._data.push(element);
+        }
     }
 };
 
@@ -518,6 +535,19 @@ Window_PDInventoryList.prototype.drawPDItem = function(item, x, y, width) {
         this.resetTextColor();
         //this.
         this.drawIcon(item.iconIndex, x + iconBoxWidth/2 , y + iconBoxWidth/2 );
+        this.contents.fontSize=16;
+        this.contents.outlineWidth=5;
+        if(DataManager.isWeapon(item) || DataManager.isArmor(item)){
+            //console.log(item);
+            this.drawText(":"+item.params[4], x+width-25, y-5, 20, 'right');
+        }else{
+            var numOf=$gameParty.numItems(item);
+            if(numOf>1){
+                this.drawText(numOf, x+3, y-5, 20, 'left');
+            }
+        }
+        
+        
         //this.drawText(item.name, x + iconBoxWidth, y, width - iconBoxWidth);
     }
 };
