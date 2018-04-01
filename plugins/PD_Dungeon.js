@@ -37,7 +37,24 @@ DataManager.setupNewGame = function() {
         $dataSystem.startX, $dataSystem.startY);
     Graphics.frameCount = 0;
 };
-
+PD.Dungeon.identifiedPotionId=function(unidentifieditem){
+    for (var property in PD.Dungeon.PotionKnowledge) {
+        var element = PD.Dungeon.PotionKnowledge[property];
+        if(element==unidentifieditem.id){
+            return Number(property);
+        }
+    }
+    return null;
+}
+PD.Dungeon.identifiedScrollId=function(unidentifieditem){
+    for (var property in PD.Dungeon.ScrollKnowledge) {
+        var element = PD.Dungeon.ScrollKnowledge[property];
+        if(element==unidentifieditem.id){
+            return Number(property);
+        }
+    }
+    return null;
+}
 PD.Dungeon.level=function(depth){
     if(this._levels[depth]!=undefined && this._levels[depth]!=null){
         return this._levels[depth];

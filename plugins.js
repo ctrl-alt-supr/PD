@@ -13,6 +13,7 @@ var $plugins =
 {"name":"PD_Pathfinding","status":true,"description":"C8 - Allows characters to calculate movement routes without getting stuck.","parameters":{}},
 {"name":"PD_Item","status":true,"description":"","parameters":{}},
 {"name":"PD_Hero","status":true,"description":"","parameters":{}},
+{"name":"PD_Pan","status":true,"description":"","parameters":{}},
 {"name":"======GENERATOR==========================================","status":false,"description":"","parameters":{}},
 {"name":"PD_Generator","status":true,"description":"G1 - Generates dungeon levels during runtime.","parameters":{"defaultsHeader":"","defaultTileMappings":"[\"{\\\"DungeonId\\\":\\\"1\\\",\\\"RpgmId\\\":\\\"1\\\"}\",\"{\\\"DungeonId\\\":\\\"2\\\",\\\"RpgmId\\\":\\\"30\\\"}\",\"{\\\"DungeonId\\\":\\\"3\\\",\\\"RpgmId\\\":\\\"4\\\"}\",\"{\\\"DungeonId\\\":\\\"4\\\",\\\"RpgmId\\\":\\\"5\\\"}\",\"{\\\"DungeonId\\\":\\\"5\\\",\\\"RpgmId\\\":\\\"7\\\"}\",\"{\\\"DungeonId\\\":\\\"6\\\",\\\"RpgmId\\\":\\\"24\\\"}\"]","tilesetsHeader":"","perTilesetTileMappings":"[]"}},
 {"name":"PD_GeneratorRect","status":true,"description":"G2 - Classes representing rectangles and points required by the generator","parameters":{}},

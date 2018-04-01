@@ -19,7 +19,7 @@ Game_Map.prototype.createPathfinder=function(character){
     for (var y =0;y < this.height();y++) {
         walkableMatrix[y]=[];
         for (var x =0;x < this.width(); x++) {
-            walkableMatrix[y][x]=character.canPass(x,y)?0:1;
+            walkableMatrix[y][x]=(character.canPass(x,y) && character.knowsTile(x, y))?0:1;
         }
     }
     this._pathFindingGrid=new PF.Grid(walkableMatrix);
@@ -33,7 +33,7 @@ Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
     if(goalX==this.x && goalY==this.y){
         return 0;
     }
-    if(!$gameMap.hasGeneratedDungeon() || !this.canPass(this._x, this._y)|| !this.canPass(goalX, goalY)){
+    if(!$gameMap.hasGeneratedDungeon() || (!this.canPass(this._x, this._y)|| !this.canPass(goalX, goalY) && this.knowsTile(goalX, goalY) ) ){
         return PD.Aliases.Game_Map.findDirectionTo.call(this, goalX, goalY);
     }
     try{

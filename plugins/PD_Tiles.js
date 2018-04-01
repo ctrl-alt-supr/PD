@@ -202,6 +202,17 @@ PD.Tiles.tileName_EventLocalD=function(name){
     if(foundData==null || foundData.eventLocalD==undefined) return false;
     return foundData.eventLocalD;
 }
+//Tileset unstichable
+PD.Tiles.tile_Unstichable=function(id){
+    var foundData=PD.Tiles.id2data(id);
+    if(foundData==null || foundData.eventLocalD==undefined) return false;
+    return foundData.unstichable;
+}
+PD.Tiles.tileName_Unstichable=function(name){
+    var foundData=PD.Tiles.name2data(name);
+    if(foundData==null || foundData.eventLocalD==undefined) return false;
+    return foundData.unstichable;
+}
 PD.Tiles.data=[
     {
         "tileId":0,
@@ -217,7 +228,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":true
     },
     {
         "tileId":1,
@@ -233,7 +245,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":2,
@@ -249,7 +262,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":3,
@@ -265,7 +279,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":4,
@@ -285,7 +300,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":5,
@@ -304,7 +320,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":6,
@@ -323,7 +340,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":7,
@@ -338,7 +356,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":true,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":8,
@@ -354,7 +373,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":9,
@@ -370,7 +390,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":10,
@@ -390,7 +411,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":11,
@@ -410,7 +432,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":12,
@@ -426,13 +449,14 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":13,
         "tileInternalName":"WATER",
         "tilesetLayer":3, 
-        "tilesetTileId":0,
+        "tilesetTileId":63,
         "name":"Water",
         "description":"In case of burning step into the water to extinguish the fire.",
         "through":true,
@@ -441,7 +465,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":true,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":14,
@@ -457,7 +482,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":15,
@@ -473,7 +499,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":true
     },
     {
         "tileId":16,
@@ -488,7 +515,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":17,
@@ -503,7 +531,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":18,
@@ -518,7 +547,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":19,
@@ -534,7 +564,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":20,
@@ -549,7 +580,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":21,
@@ -569,7 +601,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":22,
@@ -589,7 +622,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":23,
@@ -604,7 +638,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":24,
@@ -619,7 +654,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":25,
@@ -634,7 +670,8 @@ PD.Tiles.data=[
         "flamable":true,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":26,
@@ -649,7 +686,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":27,
@@ -668,7 +706,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":28,
@@ -683,7 +722,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":29,
@@ -698,7 +738,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":30,
@@ -713,7 +754,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":31,
@@ -728,7 +770,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":32,
@@ -743,7 +786,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":33,
@@ -758,7 +802,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":true
+        "avoid":true,
+        "unstichable":false
     },
     {
         "tileId":34,
@@ -773,7 +818,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":35,
@@ -788,7 +834,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":36,
@@ -803,7 +850,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":37,
@@ -818,7 +866,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":38,
@@ -833,7 +882,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":39,
@@ -848,7 +898,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":40,
@@ -863,7 +914,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":41,
@@ -878,7 +930,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     },
     {
         "tileId":42,
@@ -893,7 +946,8 @@ PD.Tiles.data=[
         "flamable":false,
         "hidden":false,
         "liquid":false,
-        "avoid":false
+        "avoid":false,
+        "unstichable":false
     }    
     
 ];

@@ -238,6 +238,33 @@ try{
     console.warn("Game_TileEvent is not defined. PD_Poses is meant to be placed after PD_Generator");
 }
 
+
+try{
+    if(Game_ItemEvent!=undefined){
+        Game_ItemEvent.prototype.getPosesNoteContents = function() {
+            return window["$dataMap_"+PD.Generator.Parameters.ItemEventMapId].events[this._dbEventId].note;
+        }
+        Game_ItemEvent.prototype.getEditorOriginalIndex = function() {
+            var pag=this.page();
+            if(pag!=undefined && pag!=null){
+                return pag.image.characterIndex;
+            }
+            this._PDPoses.needsRefresh=true
+            return 0;
+        }
+        Game_ItemEvent.prototype.getEditorOriginalName = function() {
+            var pag=this.page();
+            if(pag!=undefined && pag!=null){
+                return pag.image.characterName;
+            }
+            this._PDPoses.needsRefresh=true
+            return "";
+        }
+    }
+}catch(e){
+    console.warn("Game_ItemEvent is not defined. PD_Poses is meant to be placed after PD_Item");
+}
+
 Game_CharacterBase.prototype.parsePosesNotetags = function() {
     var theNote=this.getPosesNoteContents();
     var rgx=new RegExp("<\\s*pose\\s+([\\w\\s\\d='\":_\\.\\*\\+-\\{\\}]*?)\\s*\\/?\\s*>", "ig");

@@ -1,3 +1,21 @@
+//=============================================================================
+// PD_Item.js
+//=============================================================================
+/*:
+ * @plugindesc 
+ * @author Alex
+ *
+ * @help This plugin doesn't provide any plugin command.
+ * 
+ * @param defaultsHeader
+ * @text Default mappings
+ * 
+ * 
+ * 
+ * 
+ * 
+*/
+
 PD=PD||{};
 PD.Item=PD.Item||{};
 PD.Item.Type={
@@ -45,6 +63,7 @@ PD.Item.isPotion=function(item){
 PD.Item.isScroll=function(item){
     return PD.Item.Scrolls.indexOf(item.id)>-1 || item.id==PD.Item.ScrollOfWipeout;
 }
+
 PD.Item.isFood=function(item){
     return PD.Item.Foods.indexOf(item.id)>-1;
 }
@@ -222,9 +241,41 @@ PD.Item.generateScrollKnowledge=function(){
     }
     return toRet;
 }
+PD.Item.parseItemEventIdNotetag=function(eNote){
+    var toReturn=null;
+    var rgx=new RegExp("<\\s*event\\s+([\\w\\s\\d='\":_\\.\\*\\+-\\{\\}]*)\\s*\\/?\\s*>", "ig");
+    var regexMatch = rgx.exec(eNote);
+    if(regexMatch){
+        var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
+        this._dungeonOptions={};
+        var defOpts={
+            id:null
+        };
+        for(var propertyName in defOpts) {
+            if(dp.documentElement.attributes[propertyName]!=null){
+                this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+            }else{
+                this._dungeonOptions[propertyName]=defOpts[propertyName];
+            }
+        }
+        toReturn= this._dungeonOptions;//Object.assign(defOpts, temporalAttrs);
+    }
+    return toReturn;
+}
 
-
-
+PD.Item.getItemDBEventId=function(item){
+    return PD.Item.parseItemEventIdNotetag($dataItems[item.id].note);
+}
+PD.Item.getItemEventDBData=function(itemID){
+    var dbEventId=PD.Item.parseItemEventIdNotetag($dataItems[itemID].note);
+    if(dbEventId==null || dbEventId<=0) return null;
+    dbEventId=dbEventId.id;
+    if(window["$dataMap_"+PD.Generator.Parameters.ItemEventMapId]==undefined || window["$dataMap_"+PD.Generator.Parameters.ItemEventMapId]==null){
+        return null;
+    }
+    var db=window["$dataMap_"+PD.Generator.Parameters.ItemEventMapId];
+    return db.events.length>dbEventId?db.events[dbEventId]:null;
+}
 
 
 
@@ -366,6 +417,15 @@ Game_Party.prototype.armors = function() {
     return toRet;
 };
 Game_Party.prototype.gainItem = function(item, amount, includeEquip) {
+    var identifiedPot=PD.Dungeon.identifiedPotionId(item);
+    if(identifiedPot!=null){
+        item.id=identifiedPot;
+    }else{
+        identifiedPot=PD.Dungeon.identifiedScrollId(item); 
+        if(identifiedPot!=null){
+            item.id=identifiedPot;
+        }
+    }
     var container = this.itemContainer(item);
     if (container) {
         var lastNumber = this.numItems(item);
@@ -450,4 +510,76 @@ Game_Party.prototype.hasItem = function(item, includeEquip) {
     } else {
         return false;
     }
+};
+
+Game_Character.prototype.dropItem=function(item){
+    PD.Item.spawnItem(item.id, this.x, this.y);
+}
+PD.Item.spawnItem=function(itemId, x, y){
+    var tmplData=PD.Item.getItemEventDBData(itemId);
+    if(tmplData!=null){
+        var dbEventId=PD.Item.parseItemEventIdNotetag($dataItems[itemId].note).id;
+        $gameMap._events.push(new Game_ItemEvent($gameMap._mapId, x, y, dbEventId, tmplData, $gameMap._events.length));
+        $gameMap.refreshTileEvents();
+        $gameMap.refresh();
+    }
+}
+
+//-----------------------------------------------------------------------------
+// Game_ItemEvent
+//
+// The game object class for an event. It contains functionality for event page
+// switching and running parallel process events.
+
+
+
+
+function Game_ItemEvent() {
+    this.initialize.apply(this, arguments);
+}
+
+
+
+Game_ItemEvent.prototype = Object.create(Game_Event.prototype);
+Game_ItemEvent.prototype.constructor = Game_ItemEvent;
+
+Game_ItemEvent.prototype.initialize = function(mapId, xPos, yPos, dbEventId, dbEventData, eventId) {
+    Game_Character.prototype.initialize.call(this);
+    this._dbEventId = dbEventId;
+    this._dbEventData=dbEventData;
+    this._mapId = mapId;
+    this._eventId = eventId;
+    this.locate(xPos, yPos);
+    this.refresh();
+    
+};
+
+Game_ItemEvent.prototype.setupPage=function(){
+    Game_Event.prototype.setupPage.call(this);
+}
+Game_ItemEvent.prototype.hasOtherEventOver=function(){
+    var eventsHere=$gameMap.eventsXy(this.x, this.y);
+    var slf=this;
+    return eventsHere.filter(function(eE){
+        return eE.eventId!=slf.eventId;
+    }).length>0;
+}
+Game_ItemEvent.prototype.hasPlayerOver=function(){
+    return $gamePlayer.x==this.x && $gamePlayer.y==this.y;
+}
+Game_ItemEvent.prototype.hasSomethingOver=function(){
+    return this.hasPlayerOver()||this.hasOtherEventOver();
+}
+Game_ItemEvent.prototype.event = function() {
+    return window["$dataMap_"+PD.Generator.Parameters.ItemEventMapId].events[this._dbEventId];
+};
+Game_ItemEvent.prototype.initMembers = function() {
+    Game_Event.prototype.initMembers.call(this);
+};
+
+Game_ItemEvent.prototype.dbEventId = function() {
+    return this._dbEventId;
+};
+Game_ItemEvent.prototype.dbEventData = function() {
+    return this._dbEventData;
 };

@@ -42,6 +42,7 @@
  * @type struct<TileMapping>[]
  *
  * 
+ * 
  */
 
 //=============================================================================
@@ -63,7 +64,12 @@
  * @type number
  * @decimals 0
  * 
- * 
+ * @param ItemEventMapId
+ * @text Item Event Database MapId
+ * @description The id of the map containig the event templates for items.
+ * @default 1
+ * @type number
+ * @decimals 0
  * 
 */
 
@@ -91,6 +97,7 @@ PD.Generator.Dungeon=function(levelObject){
 PD.Generator.Dungeon.prototype.initialize=function(levelObject){
     if(levelObject!=undefined){
         this._depth=levelObject._depth;
+        this._level=levelObject;
         this._height=$gameMap.height();
         this._width=$gameMap.width();
         this._minRoomSize=7;
@@ -255,10 +262,171 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
     //this.placeAllDoors();
     this.paint();
     this.paintAllDoors();
+    this.paintWater();
+    this.paintGrass();
+
+    this.decorate();
 
     return true;
 
 }
+
+PD.Generator.Dungeon.prototype.decorate=function() {
+    this._level.decorate(this);
+}
+
+PD.Generator.Dungeon.prototype.paintWater=function() {
+    var lake = this._level.water(this);
+    var floorTile=PD.Tiles.name2id("ROOMFLOOR");
+    var waterTile=PD.Tiles.name2id("WATER");
+    for (var y=0; y < this._height; y++) {
+        for (var x=0; x < this._width; x++) {
+            if(this.getTileId(x,y)==floorTile && lake[x][y]){
+                this.setTileId(x, y, waterTile);
+            }
+        }
+    }
+}
+
+PD.Generator.Dungeon.prototype.getWaterTile=function(x, y) {
+    var waterTilesOrigin=PD.Tiles.tileName_TilesetTileId("WATER")-15;
+    var blocks=[false, false, false, false];
+    var waters=[false, false, false, false];
+    var floors=[false, false, false, false];
+    var blockTiles=[PD.Tiles.name2id("VOID"), PD.Tiles.name2id("WALL"), PD.Tiles.name2id("BOOKSHELF"), PD.Tiles.name2id("BARRICADE"), PD.Tiles.name2id("DECOWALL"), PD.Tiles.name2id("CLOSEDDOOR"), PD.Tiles.name2id("OPENDOOR"), PD.Tiles.name2id("LOCKEDDOOR")];
+    var floorTiles=[PD.Tiles.name2id("ROOMFLOOR"), PD.Tiles.name2id("FLOORSP"), PD.Tiles.name2id("DECOFLOOR"), PD.Tiles.name2id("EMBERS"), PD.Tiles.name2id("UPSTAIRS"), PD.Tiles.name2id("PEDESTAL"), PD.Tiles.name2id("DOWNSTAIRS"), PD.Tiles.name2id("GRASS"), PD.Tiles.name2id("TRAMPLEDGRASS")];
+    var waterTiles=[PD.Tiles.name2id("WATER")];
+    var neigs=this.getNeigbourTiles(new PD.Generator.Dungeon.Point(x, y), 4);
+    for (var j = 0; j < neigs.length; j++) {
+        var element = neigs[j];
+        var elTile=this.getTileId(element.x, element.y);
+        if(blockTiles.indexOf(elTile)!=-1){
+            blocks[j]=true;
+        }else if(floorTiles.indexOf(elTile)!=-1){
+            floors[j]=true;
+        }else if(waterTiles.indexOf(elTile)!=-1){
+            waters[j]=true;
+        }
+    }
+    if(floors.filter(function(e){return e==true}).length==4){
+        return waterTilesOrigin;
+    }else if(blocks.filter(function(e){return e==true}).length==4){
+        return waterTilesOrigin+15;
+    }else if(waters.filter(function(e){return e==true}).length==4){
+        return waterTilesOrigin+15;
+    }else if(blocks.filter(function(e){return e==true}).length+waters.filter(function(e){return e==true}).length==4){
+        return waterTilesOrigin+15;
+    }
+    if(floors[0] && !floors[1] && !floors[2] && !floors[3]){
+        //floor left
+        return waterTilesOrigin+7;
+    }else if(!floors[0] && floors[1] && !floors[2] && !floors[3]){
+        //floor down
+        return waterTilesOrigin+11;
+    }else if(!floors[0] && !floors[1] && floors[2] && !floors[3]){
+        //floor right
+        return waterTilesOrigin+13;
+    }else if(!floors[0] && !floors[1] && !floors[2] && floors[3]){
+        //floor up
+        return waterTilesOrigin+14;
+    }else if(floors[0] && floors[1] && !floors[2] && !floors[3]){
+        //floor left down
+        return waterTilesOrigin+3;
+    }else if(!floors[0] && floors[1] && floors[2] && !floors[3]){
+        //floor down right
+        return waterTilesOrigin+9;
+    }else if(!floors[0] && !floors[1] && floors[2] && floors[3]){
+        //floor right up
+        return waterTilesOrigin+12;
+    }else if(floors[0] && !floors[1] && !floors[2] && floors[3]){
+        //floor up left
+        return waterTilesOrigin+6;
+    }else if(floors[0] && !floors[1] && floors[2] && !floors[3]){
+        //floor right left
+        return waterTilesOrigin+5;
+    }else if(!floors[0] && floors[1] && !floors[2] && floors[3]){
+        //floor up down
+        return waterTilesOrigin+10;
+    }else if(floors[0] && floors[1] && floors[2] && !floors[3]){
+        //floor left down right
+        return waterTilesOrigin+3;
+    }else if(!floors[0] && floors[1] && floors[2] && floors[3]){
+        //floor down right up
+        return waterTilesOrigin+8;
+    }else if(floors[0] && !floors[1] && floors[2] && floors[3]){
+        //floor left right up
+        return waterTilesOrigin+4;
+    }else if(floors[0] && floors[1] && !floors[2] && floors[3]){
+        //floor left down up
+        return waterTilesOrigin+2;
+    }else if(floors[0] && floors[1] && floors[2] && !floors[3]){
+        //floor left down right
+        return waterTilesOrigin+1;
+    }
+    return waterTilesOrigin;
+}
+
+PD.Generator.Dungeon.prototype.paintGrass=function() {
+    var grass = this._level.grass(this);
+    var floorTile=PD.Tiles.name2id("ROOMFLOOR");
+    var grassTile=PD.Tiles.name2id("GRASS");
+    var trampledGrass=PD.Tiles.name2id("TRAMPLEDGRASS");
+    if(this._level._feeling==PD.Level.Feeling.GRASS){
+        for (var index = 0; index < this._rooms.length; index++) {
+            var r=this._rooms[index];
+            if(r.type()!=null && r.type()!=PD.Generator.Dungeon.Room.Type.PASSAGE && r.type()!=PD.Generator.Dungeon.Room.Type.TUNNEL){
+                grass[r.left+1][r.top+1]=true;
+                grass[r.right-1][r.top+1]=true;
+                grass[r.left+1][r.bottom-1]=true;
+                grass[r.right-1][r.bottom-1]=true;
+            }
+        }
+    }
+    for (var y=0; y < this._height; y++) {
+        for (var x=0; x < this._width; x++) {
+            if(this.getTileId(x,y)==floorTile && grass[x][y]){
+                var count=0;
+                var tl=new PD.Generator.Dungeon.Point(x,y);
+                var neigs=this.getNeigbourTiles(tl, 8);
+                for (var index = 0; index < neigs.length; index++) {
+                    var el = neigs[index];
+                    if(grass[el.x][el.y]){
+                        count++;
+                    }
+                }
+                this.setTileId(x, y, ((PD.Helpers.randomInteger(100)/100)<(count/12))?grassTile:trampledGrass);
+            }
+        }
+    }
+}
+
+PD.Generator.Dungeon.prototype.getNeigbourTiles=function(origin, directions){
+    if(directions==0){
+        return [new PD.Generator.Dungeon.Point(origin.x, origin.y)];
+    }
+    var toRet=[];
+    if(directions==4 || directions==8 || directions==9){
+        //Left
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x-1, origin.y));
+        //Down
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x, origin.y+1));
+        //Right
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x+1, origin.y));
+        //Up
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x, origin.y-1));
+    }
+    if(directions==8 || directions==9){
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x-1, origin.y-1));
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x-1, origin.y+1));
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x+1, origin.y-1));
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x+1, origin.y+1));
+    }
+    if(directions==9){
+        toRet.push(new PD.Generator.Dungeon.Point(origin.x, origin.y));
+    }
+    return toRet;
+}
+
 PD.Generator.Dungeon.prototype.paint=function(){
     var voidTile=PD.Tiles.name2id("VOID");
     for (var roomIndex = 0; roomIndex < this._connected.length; roomIndex++) {
@@ -579,7 +747,67 @@ PD.Generator.Dungeon.prototype.connectedsByType=function(types) {
     }
     return res;
 }
-
+PD.Generator.Dungeon.prototype.generateTerrainPatch=function(seed, nGen) {
+    var cur=[];
+    var off=[];
+    do{
+        cur.push(false);
+    }while(cur.length<this._width*this._height)
+    do{
+        off.push((PD.Helpers.randomInteger(100)/100)<seed);
+    }while(off.length<this._width*this._height)
+    for (var i=0; i < nGen; i++) {
+        for (var y=1; y < this._height-1; y++) {
+            for (var x=1; x < this._width-1; x++) {
+                var pos = x + y * this._width;
+                var count = 0;
+                if (off[pos-this._width-1]) {
+                    count++;
+                }
+                if (off[pos-this._width]) {
+                    count++;
+                }
+                if (off[pos-this._width+1]) {
+                    count++;
+                }
+                if (off[pos-1]) {
+                    count++;
+                }
+                if (off[pos+1]) {
+                    count++;
+                }
+                if (off[pos+this._width-1]) {
+                    count++;
+                }
+                if (off[pos+this._width]) {
+                    count++;
+                }
+                if (off[pos+this._width+1]) {
+                    count++;
+                }
+                if (!off[pos] && count >= 5) {
+                    cur[pos] = true;
+                } else if (off[pos] && count >= 4) {
+                    cur[pos] = true;
+                } else {
+                    cur[pos] = false;
+                }
+            }
+        }
+        var tmp = cur;
+        cur = off;
+        off = tmp;
+    }
+    var divisiones= off.length / this._width;
+    var result=[];
+    for (var index = 0; index < divisiones; index++) {
+        result[index]=[];
+        for (var index2 = 0; index2 < this._width; index2++) {
+            result[index][index2]=off.shift();
+        }
+    }
+    return result;
+}
 
 
 
@@ -612,6 +840,7 @@ if(isInMV && PluginManager!=undefined){
     var pars=PluginManager.parameters('PD_Generator');
     PD.Generator.Parameters={};
     PD.Generator.Parameters.TileEventDBMapId = Number(pars["TileEventDBMapId"] || "4");
+    PD.Generator.Parameters.ItemEventMapId = Number(pars["ItemEventMapId"] || "1");
 
             
 
@@ -769,14 +998,20 @@ if(isInMV && PluginManager!=undefined){
         //Z ES LA CAPA EN EL EDITOR!!!!! JODEEEEEER!!!
         if(z==2){
             //var tmpData=PD.Generator.Helpers.rotateMapToLeft(this._dungeonGenerator._tiles);
-            return this.getMappedTile(this._dungeonGenerator.getTileId(x,y));
+            return this.getMappedTile(this._dungeonGenerator.getTileId(x,y), x, y);
         }else{
             return $dataMap.data[(z * height + y) * width + x] || 0;
         }
     }
 
-    Game_Map.prototype.getMappedTile=function (generatedTileId) {
-        return PD.Tiles.tile_TilesetTileId(generatedTileId);
+    Game_Map.prototype.getMappedTile=function (generatedTileId, x, y) {
+        var waterTileId=PD.Tiles.name2id("WATER");
+        if(generatedTileId==waterTileId){
+            return this._dungeonGenerator.getWaterTile(x, y);
+        }else{
+            return PD.Tiles.tile_TilesetTileId(generatedTileId);
+        }
+        
     }
     Game_Map.prototype.getMappedTileInverse=function (mvTileId, layer) {
         var found=PD.Generator.Parameters.defaultTileMappings.filter(function(gt){
@@ -851,10 +1086,15 @@ if(isInMV && PluginManager!=undefined){
             var filename = 'Map%1.json'.format(mapId.padZero(3));
             this._mapLoader = ResourceHandler.createLoader('data/' + filename, this.loadDataFile.bind(this, '$dataMap', filename));
             this.loadDataFile('$dataMap', filename);
-            //We load the EventTileDatabase (ToDo:    HARDCODED TO 004!!! CHANGE THIS SOOON)
+            //We load the EventTileDatabase
             var eventTileDatabaseMapId = PD.Generator.Parameters.TileEventDBMapId;
             if(window["$dataMap_"+eventTileDatabaseMapId]==undefined || window["$dataMap_"+eventTileDatabaseMapId]==null){
                 DataManager.loadOtherMapData(eventTileDatabaseMapId);
+            }
+            //We load the EventItemDatabase
+            var eventItemDatabaseMapId = PD.Generator.Parameters.ItemEventMapId;
+            if(window["$dataMap_"+eventItemDatabaseMapId]==undefined || window["$dataMap_"+eventItemDatabaseMapId]==null){
+                DataManager.loadOtherMapData(eventItemDatabaseMapId);
             }
             //We also load all child maps datas
             var childMapIds=[];            //this.getChildMapIds(mapId);
