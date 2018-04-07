@@ -193,8 +193,8 @@ PD.Aliases.Spriteset_Map={};
 PD.Aliases.Spriteset_Map.createCharacters = Spriteset_Map.prototype.createCharacters;
 Spriteset_Map.prototype.createCharacters = function() {
     if($gameMap.hasGeneratedDungeon()){
-    // Create sprites when other sprites are loading to place it in the right "height"
-    PD.FOW._tiles = new Array($dataMap.width);
+        // Create sprites when other sprites are loading to place it in the right "height"
+        PD.FOW._tiles = new Array($dataMap.width);
         for (var i = 0; i < $dataMap.width; i++) {
             PD.FOW._tiles[i] = new Array($dataMap.height);
             for (var j = 0; j < $dataMap.height; j++) {
@@ -382,8 +382,8 @@ PD.Aliases.Game_CharacterBase.initialize = Game_CharacterBase.prototype.initiali
 Game_CharacterBase.prototype.initialize = function() {
     PD.Aliases.Game_CharacterBase.initialize.call(this);
     this._visibleTiles=[];
-    this._FOW_oldX=0;
-    this._FOW_oldY=0;
+    this._FOW_oldX=null;
+    this._FOW_oldY=null;
     this._viewRange=0;
     if(this.constructor==Game_Player){
         this._viewRange=PD.FOW.Params.playerViewRange;
@@ -440,15 +440,18 @@ Scene_Map.prototype.update = function() {
 PD.Aliases.Scene_Map.start = Scene_Map.prototype.start;
 Scene_Map.prototype.start = function() {
     PD.Aliases.Scene_Map.start.call(this);
-    this._FOW_oldX=0;
-    this._FOW_oldY=0;
+    this._FOW_oldX=null;
+    this._FOW_oldY=null;
+    if($gameMap.hasGeneratedDungeon()){
+        $gamePlayer.updateFOW();
+    }
 }
 PD.Aliases.DataManager={};
 PD.Aliases.DataManager.onDungeonMapLoaded=DataManager.onDungeonMapLoaded;
 DataManager.onDungeonMapLoaded=function(){
     PD.Aliases.DataManager.onDungeonMapLoaded.call(this);
-    $gamePlayer._FOW_oldX=0;
-    $gamePlayer._FOW_oldY=0;
+    $gamePlayer._FOW_oldX=null;
+    $gamePlayer._FOW_oldY=null;
 }
 ////////////////////////////////////////////////////////////////   FOW  END   ///////////////////////////////////////////////////////////////////
 ////////////////////////////////////////////////////////////////   FOV  START   ///////////////////////////////////////////////////////////////////

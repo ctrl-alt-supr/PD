@@ -83,6 +83,7 @@ PD.Item.isArmor = function(item) {
     return DataManager.isArmor(item);
 };
 
+
 PD.Item.UnidentifiedPotions=[
     2,  //Turquoise potion
     3,  //Crimson potion
@@ -247,18 +248,18 @@ PD.Item.parseItemEventIdNotetag=function(eNote){
     var regexMatch = rgx.exec(eNote);
     if(regexMatch){
         var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
-        this._dungeonOptions={};
+        var evOptions={};
         var defOpts={
             id:null
         };
         for(var propertyName in defOpts) {
             if(dp.documentElement.attributes[propertyName]!=null){
-                this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                evOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
             }else{
-                this._dungeonOptions[propertyName]=defOpts[propertyName];
+                evOptions[propertyName]=defOpts[propertyName];
             }
         }
-        toReturn= this._dungeonOptions;//Object.assign(defOpts, temporalAttrs);
+        toReturn= evOptions;//Object.assign(defOpts, temporalAttrs);
     }
     return toReturn;
 }
@@ -267,6 +268,13 @@ PD.Item.getItemDBEventId=function(item){
     return PD.Item.parseItemEventIdNotetag($dataItems[item.id].note);
 }
 PD.Item.getItemEventDBData=function(itemID){
+    var uidentifiedPId=PD.Dungeon.unidentifiedPotionId({id:itemID});
+    var uidentifiedSId=PD.Dungeon.unidentifiedScrollId({id:itemID});
+    if(uidentifiedPId!=null){
+        itemID=uidentifiedPId;
+    }else if(uidentifiedSId!=null){
+        itemID=uidentifiedSId;
+    }
     var dbEventId=PD.Item.parseItemEventIdNotetag($dataItems[itemID].note);
     if(dbEventId==null || dbEventId<=0) return null;
     dbEventId=dbEventId.id;
@@ -278,11 +286,74 @@ PD.Item.getItemEventDBData=function(itemID){
 }
 
 
+PD.Item.Categories={};
+PD.Item.CategoryNames=function(){
+    var catNames=[];
+    for(var propertyName in PD.Item.Categories) {
+        catNames.push(propertyName);
+    }
+    return catNames;
+}
+PD.Item.CategoryItems=function(category){
+    return PD.Item.Categories[category];
+}
+PD.Item.setupCategories=function(){
+    PD.Item.Categories={};
+    for (var index = 0; index < $dataItems.length; index++) {
+        var element = $dataItems[index];
+        if(element!=undefined && element!=null){
+            var catOpts=PD.Item.parseItemCategoryNotetag(element.note);
+            if(catOpts!=null && catOpts.name!=null){
+                PD.Item.Categories[catOpts.name]=PD.Item.Categories[catOpts.name] || [];
+                var catElement={
+                    itemId:element.id,
+                    itemName:element.name,
+                    chance:catOpts.chance
+                }
+                PD.Item.Categories[catOpts.name].push(catElement);
+            }
+        }
+    }
+}
+PD.Item.randomItem=function(category){
+    var availableItems=[];
+    if(category==null){
+        for(var propertyName in PD.Item.Categories) {
+            availableItems=availableItems.concat(PD.Item.Categories[propertyName]);
+        }
+    }else{
+        availableItems=PD.Item.CategoryItems(category);
+    }
+    return PD.Helpers.randomFromWithWeight(availableItems, "chance");
+}
 
 
-
-
-
+PD.Item.parseItemCategoryNotetag=function(eNote){
+    var toReturn=null;
+    var rgx=new RegExp("<\\s*category\\s+([\\w\\s\\d='\":_\\.\\*\\+-\\{\\}]*)\\s*\\/?\\s*>", "ig");
+    var regexMatch = rgx.exec(eNote);
+    if(regexMatch){
+        var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
+        var evOptions={};
+        var defOpts={
+            name:null,
+            chance:0
+        };
+        for(var propertyName in defOpts) {
+            if(dp.documentElement.attributes[propertyName]!=null){
+                if(propertyName=="chance"){
+                    evOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                }else{
+                    evOptions[propertyName]=String(dp.documentElement.attributes[propertyName].value);
+                }
+            }else{
+                evOptions[propertyName]=defOpts[propertyName];
+            }
+        }
+        toReturn= evOptions;//Object.assign(defOpts, temporalAttrs);
+    }
+    return toReturn;
+}
 
 
 
@@ -518,10 +589,12 @@ Game_Character.prototype.dropItem=function(item){
 PD.Item.spawnItem=function(itemId, x, y){
     var tmplData=PD.Item.getItemEventDBData(itemId);
     if(tmplData!=null){
-        var dbEventId=PD.Item.parseItemEventIdNotetag($dataItems[itemId].note).id;
-        $gameMap._events.push(new Game_ItemEvent($gameMap._mapId, x, y, dbEventId, tmplData, $gameMap._events.length));
-        $gameMap.refreshTileEvents();
-        $gameMap.refresh();
+        var dbEventId=tmplData.id;
+        var evn=new Game_ItemEvent($gameMap._mapId, x, y, dbEventId, tmplData, $gameMap._events.length);
+        $gameMap._events.push(evn);
+        var cspr=new Sprite_Character(evn);
+        SceneManager._scene._spriteset._characterSprites.push(cspr);
+        SceneManager._scene._spriteset._tilemap.addChild(cspr);
     }
 }
 

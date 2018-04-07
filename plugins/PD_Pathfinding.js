@@ -22,7 +22,7 @@ Game_Map.prototype.createPathfinder=function(character){
             walkableMatrix[y][x]=(character.canPass(x,y) && character.knowsTile(x, y))?0:1;
         }
     }
-    this._pathFindingGrid=new PF.Grid(walkableMatrix);
+    return new PF.Grid(walkableMatrix);
 }
 
 
@@ -37,18 +37,28 @@ Game_Character.prototype.findDirectionTo = function(goalX, goalY) {
         return PD.Aliases.Game_Map.findDirectionTo.call(this, goalX, goalY);
     }
     try{
-        $gameMap.createPathfinder(this);
+        var pathfindingMatrix=$gameMap.createPathfinder(this);
         if($gameMap._pathFindingFinder==undefined){
             $gameMap._pathFindingFinder=new PF.AStarFinder();
         }
-        var path = $gameMap._pathFindingFinder.findPath(this._x, this._y, goalX, goalY, $gameMap._pathFindingGrid.clone());
-        if(path.length>1){
-            var deltaX2 = this.deltaXFrom(path[1][0]);
-            var deltaY2 = this.deltaYFrom(path[1][1]);
-            if (Math.abs(deltaX2) > Math.abs(deltaY2)) {
-                return deltaX2 > 0 ? 4 : 6;
-            } else if (deltaY2 !== 0) {
-                return deltaY2 > 0 ? 8 : 2;
+        var path = $gameMap._pathFindingFinder.findPath(this._x, this._y, goalX, goalY, pathfindingMatrix.clone());
+        if(path.length>0){
+            var nextPathNode=null;
+            if(path[0][0]==this._x && path[0][1]==this._y){
+                if(path.length>1){
+                    nextPathNode=path[1];
+                }
+            }else{
+                nextPathNode=path[0];
+            }
+            if(nextPathNode!=null){
+                var deltaX2 = this.deltaXFrom(nextPathNode[0]);
+                var deltaY2 = this.deltaYFrom(nextPathNode[1]);
+                if (Math.abs(deltaX2) > Math.abs(deltaY2)) {
+                    return deltaX2 > 0 ? 4 : 6;
+                } else if (deltaY2 !== 0) {
+                    return deltaY2 > 0 ? 8 : 2;
+                }
             }
         }
     }catch(err){

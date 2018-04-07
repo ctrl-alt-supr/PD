@@ -6,9 +6,10 @@
  * */
 PD=PD||{};
 PD.Levels=[];
-PD.Level=function(depth){
-    if(depth!=undefined){
-        this._depth=depth;
+PD.Level=function(depthOpts){
+    if(depthOpts!=undefined){
+        this._depth=depthOpts.depth;
+        this._levelOptions=depthOpts;
         this._feeling=PD.Level.Feeling.NONE;
         this._generator=new PD.Generator.Dungeon(this);
     }

@@ -526,7 +526,8 @@ PD.Generator.Dungeon.prototype.paintDoors=function(room) {
 }
 PD.Generator.Dungeon.prototype._initRooms=function(){
     this._rooms=[];
-    var fullMapRect=new PD.Generator.Dungeon.ARect(0,0,this._width-1,this._height-1)
+    var mapPadding=this._level._levelOptions.padding || 0;
+    var fullMapRect=new PD.Generator.Dungeon.ARect(0+mapPadding,0+mapPadding,this._width-1-mapPadding,this._height-1-mapPadding)
     this._splitRect(fullMapRect);
     if(this._rooms.length<8){
         return false;
@@ -965,14 +966,15 @@ if(isInMV && PluginManager!=undefined){
             var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
             this._dungeonOptions={};
             var defOpts={
-                depth:1
+                depth:1,
+                padding:0
             };
             for(var propertyName in defOpts) {
                 if(dp.documentElement.attributes[propertyName]!=null){
                     if(propertyName=="wallHeight"){
                         var splitVal=dp.documentElement.attributes[propertyName].value.split(",");
                         this._dungeonOptions[propertyName]={2:Number(splitVal[0]), 4:Number(splitVal[1]), 6:Number(splitVal[2]), 8:Number(splitVal[3])};
-                    }else if(propertyName=="depth"){
+                    }else if(propertyName=="depth" || propertyName=="padding"){
                         this._dungeonOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
                     }
                 }else{
@@ -987,7 +989,7 @@ if(isInMV && PluginManager!=undefined){
     Game_Map.prototype.generateDungeon=function(){
         //var lasOpts=Object.assign(this._dungeonOptions, {width:$gameMap.width(), height:$gameMap.height()});
         //this._dungeonGenerator=new PD.Generator.Dungeon(lasOpts);
-        this._dungeonLevel=PD.Dungeon.prepareDepthLevel(this._dungeonOptions.depth);
+        this._dungeonLevel=PD.Dungeon.prepareDepthLevel(this._dungeonOptions);
         this._dungeonGenerator=this._dungeonLevel.generator();
         //this._dungeonGenerator.generate();
         this._hasGeneratedDungeon=true;

@@ -32,6 +32,7 @@ PD.Dungeon.reset=function() {
 DataManager.setupNewGame = function() {
     this.createGameObjects();
     this.selectSavefileForNewGame();
+    PD.Item.setupCategories();
     $gameParty.setupStartingMembers();
     $gamePlayer.reserveTransfer($dataSystem.startMapId,
         $dataSystem.startX, $dataSystem.startY);
@@ -51,6 +52,22 @@ PD.Dungeon.identifiedScrollId=function(unidentifieditem){
         var element = PD.Dungeon.ScrollKnowledge[property];
         if(element==unidentifieditem.id){
             return Number(property);
+        }
+    }
+    return null;
+}
+PD.Dungeon.unidentifiedPotionId=function(identifieditem){
+    for (var property in PD.Dungeon.PotionKnowledge) {
+        if(property==identifieditem.id){
+            return Number(PD.Dungeon.PotionKnowledge[property]);
+        }
+    }
+    return null;
+}
+PD.Dungeon.unidentifiedScrollId=function(identifieditem){
+    for (var property in PD.Dungeon.ScrollKnowledge) {
+        if(property==identifieditem.id){
+            return Number(PD.Dungeon.ScrollKnowledge[property]);
         }
     }
     return null;
@@ -76,19 +93,19 @@ PD.Dungeon.generator=function(depth){
 PD.Dungeon.hasGenerator=function(depth){
     return this.generator(depth)!=null;
 }
-PD.Dungeon.depth2NewLevel=function(depth){
-    var newLvl=new PD.Level(depth);
-    this._discoveredTiles[depth]=[];
+PD.Dungeon.depth2NewLevel=function(depthOpts){
+    var newLvl=new PD.Level(depthOpts);
+    this._discoveredTiles[depthOpts.depth]=[];
     return newLvl;
 }
-PD.Dungeon.createDepthLevel=function(depth){
-    if(this.hasLevel(depth)){
-        return this.level(depth);
+PD.Dungeon.createDepthLevel=function(depthOpts){
+    if(this.hasLevel(depthOpts.depth)){
+        return this.level(depthOpts.depth);
     }else{
-        var created=this.depth2NewLevel(depth);
-        this._levels[depth]=created;
-        this._discoveredTiles[depth]=[];
-        return this.level(depth);
+        var created=this.depth2NewLevel(depthOpts);
+        this._levels[depthOpts.depth]=created;
+        this._discoveredTiles[depthOpts.depth]=[];
+        return this.level(depthOpts.depth);
     }
     //Shouldn't happen... but whatever...
     return null;
@@ -98,11 +115,11 @@ PD.Dungeon.isDiscoveredTile=function(depth, x, y){
         return (itm.x==x && itm.y==y);
     }).length>0;  
 }
-PD.Dungeon.prepareDepthLevel=function(depth){
-    if(!this.hasLevel(depth)){
-        return this.createDepthLevel(depth);
+PD.Dungeon.prepareDepthLevel=function(depthOpts){
+    if(!this.hasLevel(depthOpts.depth)){
+        return this.createDepthLevel(depthOpts);
     }else{
-        return this.level(depth);
+        return this.level(depthOpts.depth);
     }
 }
 PD.Dungeon.maxReachedDepth=function(){
