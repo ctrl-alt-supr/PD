@@ -92,6 +92,12 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
 				this.setByCoord( dungeonGenerator, centerPoint.x, i, floor );
 			}
         }
-        
+        // var connectedDoors=room.connected.map(function(ea){
+        //     return ea.door;
+        // });
+        // for (var doorIndex = 0; doorIndex < connectedDoors.length; doorIndex++) {
+        //     var door = connectedDoors[doorIndex];
+        //     door.type(PD.Generator.Dungeon.Door.Type.TUNNEL);
+        // }
     }
 }

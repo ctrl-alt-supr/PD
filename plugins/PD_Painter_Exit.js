@@ -14,5 +14,12 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         var stairsPos=room.random(1);
         this.setByPoint(dungeonGenerator, stairsPos, stairsTile);
         dungeonGenerator._exitPoint=stairsPos;
+        var connectedDoors=room.connected.map(function(ea){
+            return ea.door;
+        });
+        for (var doorIndex = 0; doorIndex < connectedDoors.length; doorIndex++) {
+            var door = connectedDoors[doorIndex];
+            door.type(PD.Generator.Dungeon.Door.Type.REGULAR);
+        }
     }
 }

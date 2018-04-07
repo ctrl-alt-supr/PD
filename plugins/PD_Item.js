@@ -58,20 +58,30 @@ PD.Item.bagSize=function(bagType){
     }
 }
 PD.Item.isPotion=function(item){
-    return PD.Item.Potions.indexOf(item.id)>-1;
+    return PD.Item.Categories["POTIONS"].filter(function(e){
+        return e.itemId==item.id;
+    }).length>0;
 }
 PD.Item.isScroll=function(item){
-    return PD.Item.Scrolls.indexOf(item.id)>-1 || item.id==PD.Item.ScrollOfWipeout;
+    return PD.Item.Categories["SCROLLS"].filter(function(e){
+        return e.itemId==item.id;
+    }).length>0;
 }
 
 PD.Item.isFood=function(item){
-    return PD.Item.Foods.indexOf(item.id)>-1;
+    return PD.Item.Categories["FOODS"].filter(function(e){
+        return e.itemId==item.id;
+    }).length>0;
 }
 PD.Item.isBag=function(item){
-    return PD.Item.Bags.indexOf(item.id)>-1;
+    return PD.Item.Categories["BAGS"].filter(function(e){
+        return e.itemId==item.id;
+    }).length>0;
 }
 PD.Item.isSeed=function(item){
-    return PD.Item.Seeds.indexOf(item.id)>-1;
+    return PD.Item.Categories["SEEDS"].filter(function(e){
+        return e.itemId==item.id;
+    }).length>0;
 }
 PD.Item.isItem = function(item) {
     return DataManager.isItem(item);
@@ -195,26 +205,41 @@ PD.Item.generatePotionKnowledge=function(){
 }
 
 PD.Item.itemDisplayData=function(item){
-    if(!PD.Item.isWeapon() && !PD.Item.isArmor()){
-        if(PD.Item.isScroll(item)){
-            var itemIdToDisplay=item.id;
-            if(PD.Dungeon._knownScrolls.indexOf(item.id)==-1) itemIdToDisplay=PD.Dungeon.ScrollKnowledge[item.id];
-            return {
-                name:$dataItems[itemIdToDisplay].name,
-                description:$dataItems[itemIdToDisplay].description,
-                icon:$dataItems[itemIdToDisplay],
-                itemid:itemIdToDisplay
-            }
-        }else if(PD.Item.isPotion(item)){
-            var itemIdToDisplay=item.id;
-            if(PD.Dungeon._knownPotions.indexOf(item.id)==-1) itemIdToDisplay=PD.Dungeon.PotionKnowledge[item.id];
-            return {
-                name:$dataItems[itemIdToDisplay].name,
-                description:$dataItems[itemIdToDisplay].description,
-                icon:$dataItems[itemIdToDisplay].iconIndex,
-                itemid:itemIdToDisplay
+    if(!PD.Item.isWeapon(item) && !PD.Item.isArmor(item)){
+        var itemIdToDisplay=item.id;
+        var itemCatInfo=PD.Item.parseItemCategoryNotetag($dataItems[item.id].note);
+        if(itemCatInfo!=null && itemCatInfo.name!=null){
+            if(PD.Item.CategoryNamesRequiringKnowledge().indexOf(itemCatInfo.name)>-1){
+                if(!(PD.Dungeon.Known[itemCatInfo.name]!=undefined && PD.Dungeon.Known[itemCatInfo.name][item.id]!=undefined && PD.Dungeon.Known[itemCatInfo.name][item.id]==true)){
+                    itemIdToDisplay=PD.Item.knownItemToUnknown(item.id);
+                }
             }
         }
+        return {
+            name:$dataItems[itemIdToDisplay].name,
+            description:$dataItems[itemIdToDisplay].description,
+            icon:$dataItems[itemIdToDisplay].iconIndex,
+            itemid:itemIdToDisplay
+        }
+        // if(PD.Item.isScroll(item)){
+        //     var itemIdToDisplay=item.id;
+        //     if(PD.Dungeon._knownScrolls.indexOf(item.id)==-1) itemIdToDisplay=PD.Dungeon.ScrollKnowledge[item.id];
+        //     return {
+        //         name:$dataItems[itemIdToDisplay].name,
+        //         description:$dataItems[itemIdToDisplay].description,
+        //         icon:$dataItems[itemIdToDisplay],
+        //         itemid:itemIdToDisplay
+        //     }
+        // }else if(PD.Item.isPotion(item)){
+        //     var itemIdToDisplay=item.id;
+        //     if(PD.Dungeon._knownPotions.indexOf(item.id)==-1) itemIdToDisplay=PD.Dungeon.PotionKnowledge[item.id];
+        //     return {
+        //         name:$dataItems[itemIdToDisplay].name,
+        //         description:$dataItems[itemIdToDisplay].description,
+        //         icon:$dataItems[itemIdToDisplay].iconIndex,
+        //         itemid:itemIdToDisplay
+        //     }
+        // }
     }
     return {
         name:item.name,
@@ -268,13 +293,17 @@ PD.Item.getItemDBEventId=function(item){
     return PD.Item.parseItemEventIdNotetag($dataItems[item.id].note);
 }
 PD.Item.getItemEventDBData=function(itemID){
-    var uidentifiedPId=PD.Dungeon.unidentifiedPotionId({id:itemID});
-    var uidentifiedSId=PD.Dungeon.unidentifiedScrollId({id:itemID});
-    if(uidentifiedPId!=null){
-        itemID=uidentifiedPId;
-    }else if(uidentifiedSId!=null){
-        itemID=uidentifiedSId;
+    var catInfo=PD.Item.parseItemCategoryNotetag($dataItems[itemID].note);
+    if(catInfo!=null && catInfo.name!=null && catInfo.requiresKnowledge){
+        itemID=PD.Item.knownItemToUnknown(itemID);
     }
+    // var uidentifiedPId=PD.Dungeon.unidentifiedPotionId({id:itemID});
+    // var uidentifiedSId=PD.Dungeon.unidentifiedScrollId({id:itemID});
+    // if(uidentifiedPId!=null){
+    //     itemID=uidentifiedPId;
+    // }else if(uidentifiedSId!=null){
+    //     itemID=uidentifiedSId;
+    // }
     var dbEventId=PD.Item.parseItemEventIdNotetag($dataItems[itemID].note);
     if(dbEventId==null || dbEventId<=0) return null;
     dbEventId=dbEventId.id;
@@ -294,11 +323,94 @@ PD.Item.CategoryNames=function(){
     }
     return catNames;
 }
+
+PD.Item.CategoryNamesRequiringKnowledge=function(){
+    var catNames=[];
+    for(var propertyName in PD.Item.Categories) {
+        if(PD.Item.Categories[propertyName].filter(function(ec){
+            return ec.requiresKnowledge;
+        }).length>0){
+            for(var propertyName2 in PD.Item.Categories) {
+                if(propertyName2!=propertyName && PD.Item.Categories[propertyName2].filter(function(ec2){
+                    return ec2.unknownOf==propertyName;
+                }).length>0){
+                    catNames.push(propertyName)
+                }
+            }
+        }
+    }
+    return catNames;
+}
+PD.Item.CategoryNamesUnknownOf=function(){
+    var catNames=[];
+    for(var propertyName in PD.Item.Categories) {
+        if(PD.Item.Categories[propertyName].filter(function(ec){
+            return ec.unknownOf!=null;
+        }).length>0){
+            catNames.push(propertyName);
+        }
+    }
+    return catNames;
+}
+PD.Item.knownCategoryToUnknown=function(knownCat){
+    if(knownCat==null){
+        return null;
+    }
+    if(PD.Item.CategoryNamesRequiringKnowledge().indexOf(knownCat)>-1){
+        for(var propertyName in PD.Item.Categories) {
+            if(PD.Item.Categories[propertyName].filter(function(ec2){
+                return ec2.unknownOf==knownCat;
+            }).length>0){
+                return propertyName
+            }
+        }
+    }
+    return null;
+}
+PD.Item.unknownCategoryToKnown=function(unknownCat){
+    if(unknownCat==null){
+        return null;
+    }
+    for (var index = 0; index < PD.Item.Categories[unknownCat].length; index++) {
+        var element = PD.Item.Categories[unknownCat][index];
+        if(element.unknownOf!=null){
+            return element.unknownOf;
+        }
+    }
+    return null;
+}
+PD.Item.knownItemToUnknown=function(knownItem){
+    var itemData=$dataItems[knownItem];
+    var itemCatInfo=PD.Item.parseItemCategoryNotetag(itemData.note);
+    if(itemCatInfo!=null && itemCatInfo.name!=null && itemCatInfo.requiresKnowledge){
+        if(PD.Dungeon.Knowledge[itemCatInfo.name]!=undefined && PD.Dungeon.Knowledge[itemCatInfo.name][knownItem]!=undefined){
+            return PD.Dungeon.Knowledge[itemCatInfo.name][knownItem];
+        }
+    }
+    return null;
+}
+PD.Item.unknownItemToKnown=function(unknownItem){
+    var itemData=$dataItems[unknownItem];
+    var itemCatInfo=PD.Item.parseItemCategoryNotetag(itemData.note);
+    if(itemCatInfo!=null && itemCatInfo.name!=null && itemCatInfo.unknownOf!=null){
+        if(PD.Dungeon.Knowledge[itemCatInfo.unknownOf]!=undefined){
+            for(var propertyName in PD.Dungeon.Knowledge[itemCatInfo.unknownOf]) {
+                var unkId = PD.Dungeon.Knowledge[itemCatInfo.unknownOf][propertyName];
+                if(unkId==unknownItem){
+                    return propertyName;
+                }
+            }
+        }
+    }
+    return null;
+}
+
 PD.Item.CategoryItems=function(category){
     return PD.Item.Categories[category];
 }
 PD.Item.setupCategories=function(){
     PD.Item.Categories={};
+    //Setup MV database item categories. This includes scrolls, potions, food and other random items... and also RANGED weapons
     for (var index = 0; index < $dataItems.length; index++) {
         var element = $dataItems[index];
         if(element!=undefined && element!=null){
@@ -308,9 +420,29 @@ PD.Item.setupCategories=function(){
                 var catElement={
                     itemId:element.id,
                     itemName:element.name,
+                    requiresKnowledge:catOpts.requiresKnowledge,
+                    unknownOf:catOpts.unknownOf,
                     chance:catOpts.chance
                 }
                 PD.Item.Categories[catOpts.name].push(catElement);
+            }
+        }
+    }
+    //Setup MV database weapon categories. The name is ignored and only the chances are taken in account. "WEAPONS" category
+    for (var index = 0; index < $dataWeapons.length; index++) {
+        var element = $dataWeapons[index];
+        if(element!=undefined && element!=null){
+            var catOpts=PD.Item.parseItemCategoryNotetag(element.note);
+            if(catOpts!=null){
+                PD.Item.Categories["WEAPONS"]=PD.Item.Categories["WEAPONS"] || [];
+                var catElement={
+                    itemId:element.id,
+                    itemName:element.name,
+                    requiresKnowledge:catOpts.requiresKnowledge,
+                    unknownOf:catOpts.unknownOf,
+                    chance:catOpts.chance
+                }
+                PD.Item.Categories["WEAPONS"].push(catElement);
             }
         }
     }
@@ -320,6 +452,10 @@ PD.Item.randomItem=function(category){
     if(category==null){
         for(var propertyName in PD.Item.Categories) {
             availableItems=availableItems.concat(PD.Item.Categories[propertyName]);
+        }
+    }else if(category.constructor === Array){
+        for (var index = 0; index < category.length; index++) {
+            availableItems=availableItems.concat(PD.Item.Categories[category[index]]);
         }
     }else{
         availableItems=PD.Item.CategoryItems(category);
@@ -336,6 +472,8 @@ PD.Item.parseItemCategoryNotetag=function(eNote){
         var dp=new window.DOMParser().parseFromString(regexMatch[0], "text/xml");
         var evOptions={};
         var defOpts={
+            unknownOf:null,
+            requiresKnowledge:false,
             name:null,
             chance:0
         };
@@ -343,6 +481,8 @@ PD.Item.parseItemCategoryNotetag=function(eNote){
             if(dp.documentElement.attributes[propertyName]!=null){
                 if(propertyName=="chance"){
                     evOptions[propertyName]=Number(dp.documentElement.attributes[propertyName].value);
+                }else if(propertyName=="requiresKnowledge"){
+                    evOptions[propertyName]=Boolean(dp.documentElement.attributes[propertyName].value.toLowerCase()=="true");
                 }else{
                     evOptions[propertyName]=String(dp.documentElement.attributes[propertyName].value);
                 }
@@ -355,7 +495,39 @@ PD.Item.parseItemCategoryNotetag=function(eNote){
     return toReturn;
 }
 
-
+PD.Item.generateCategoryKnowledge=function(knownCategory){
+    var toRet={};
+    var usedUnidentified=[];
+    var knownIds=[];
+    var unknownIds=[];
+    if(PD.Item.CategoryNamesRequiringKnowledge().indexOf(knownCategory)>-1){
+        var unknownCategoryName=PD.Item.knownCategoryToUnknown(knownCategory);
+        knownIds=PD.Item.Categories[knownCategory].filter(function(i){
+            return i.requiresKnowledge;
+        }).map(function(i){
+            return i.itemId;
+        });
+        unknownIds=PD.Item.Categories[unknownCategoryName].filter(function(i){
+            return i.unknownOf==knownCategory;
+        }).map(function(i){
+            return i.itemId;
+        });
+        if(knownIds.length>unknownIds.length){
+            console.warn("There are less defined unidentified entries in "+unknownCategoryName+" than identified in "+knownCategory+". The system is intended to use only one type of unidentified item for identified one.");
+        }else{
+            for (var index = 0; index < knownIds.length; index++) {
+                var identified = knownIds[index];
+                var newUnidentified=null;
+                do{
+                    newUnidentified=PD.Helpers.randomFrom(unknownIds);
+                }while(usedUnidentified.indexOf(newUnidentified)!=-1);
+                usedUnidentified.push(newUnidentified);
+                toRet[identified]=newUnidentified;
+            }
+        }
+    }
+    return toRet;
+}
 
 
 
@@ -488,15 +660,19 @@ Game_Party.prototype.armors = function() {
     return toRet;
 };
 Game_Party.prototype.gainItem = function(item, amount, includeEquip) {
-    var identifiedPot=PD.Dungeon.identifiedPotionId(item);
-    if(identifiedPot!=null){
-        item.id=identifiedPot;
-    }else{
-        identifiedPot=PD.Dungeon.identifiedScrollId(item); 
-        if(identifiedPot!=null){
-            item.id=identifiedPot;
-        }
+    // var identifiedPot=PD.Dungeon.identifiedPotionId(item);
+    var catInfo=PD.Item.parseItemCategoryNotetag($dataItems[item.id].note);
+    if(catInfo!=null && catInfo.name!=null && catInfo.unknownOf!=null){
+        item.id=PD.Item.unknownItemToKnown(item.id);
     }
+    // if(identifiedPot!=null){
+    //     item.id=identifiedPot;
+    // }else{
+    //     identifiedPot=PD.Dungeon.identifiedScrollId(item); 
+    //     if(identifiedPot!=null){
+    //         item.id=identifiedPot;
+    //     }
+    // }
     var container = this.itemContainer(item);
     if (container) {
         var lastNumber = this.numItems(item);
@@ -592,9 +768,11 @@ PD.Item.spawnItem=function(itemId, x, y){
         var dbEventId=tmplData.id;
         var evn=new Game_ItemEvent($gameMap._mapId, x, y, dbEventId, tmplData, $gameMap._events.length);
         $gameMap._events.push(evn);
-        var cspr=new Sprite_Character(evn);
-        SceneManager._scene._spriteset._characterSprites.push(cspr);
-        SceneManager._scene._spriteset._tilemap.addChild(cspr);
+        if(SceneManager._scene._spriteset!=undefined && SceneManager._scene._spriteset!=null && SceneManager._scene._characterSprites!=undefined && SceneManager._scene._characterSprites!=null){
+            var cspr=new Sprite_Character(evn);
+            SceneManager._scene._spriteset._characterSprites.push(cspr);
+            SceneManager._scene._spriteset._tilemap.addChild(cspr);
+        }
     }
 }
 

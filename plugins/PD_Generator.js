@@ -164,6 +164,8 @@ PD.Generator.Dungeon.prototype.reset=function(){
     this._exitRoom=null;
     this._exitPoint=null;
     this._shopRoom=null;
+    this._itemsToSpawn=[];
+    this._itemsToSpawnAt=[];
     this._specials=[
         PD.Generator.Dungeon.Room.Type.ARMORY, 
         PD.Generator.Dungeon.Room.Type.WEAK_FLOOR, 
@@ -267,12 +269,34 @@ PD.Generator.Dungeon.prototype.generate=function(baseTileId){
 
     this.decorate();
 
+    
+
     return true;
 
 }
 
 PD.Generator.Dungeon.prototype.decorate=function() {
     this._level.decorate(this);
+}
+PD.Generator.Dungeon.prototype.createItems=function(){
+    for (var index = 0; index < this._itemsToSpawn.length; index++) {
+        var element = this._itemsToSpawn[index];
+        var cell=this.randomDropCell();
+        PD.Item.spawnItem(element, cell.x, cell.y);
+    }
+    for (var index = 0; index < this._itemsToSpawnAt.length; index++) {
+        var element = this._itemsToSpawnAt[index];
+        var cell=element.pos;
+        PD.Item.spawnItem(element.id, cell.x, cell.y);
+    }
+}
+
+PD.Generator.Dungeon.prototype.addItemToSpawn=function(itemId){
+    this._itemsToSpawn.push(itemId);
+}
+
+PD.Generator.Dungeon.prototype.addItemToSpawnAt=function(itemId, point){
+    this._itemsToSpawnAt.push({id:itemId, pos:point});
 }
 
 PD.Generator.Dungeon.prototype.paintWater=function() {
@@ -510,17 +534,37 @@ PD.Generator.Dungeon.prototype.addToConnections=function(room) {
 }
 PD.Generator.Dungeon.prototype.paintDoors=function(room) {
     var doorTile=PD.Tiles.name2id("CLOSEDDOOR");
+    var lockedDoorTile=PD.Tiles.name2id("LOCKEDDOOR");
+    var barricadeTile=PD.Tiles.name2id("BARRICADE");
+    var bookshelfTile=PD.Tiles.name2id("BOOKSHELF");
+    var doorHiddenTile=PD.Tiles.name2id("HIDDENDOOR");
     var floorTile=PD.Tiles.name2id("ROOMFLOOR");
+    var tunnelTile=this._level.tunnelTile();
     for (var idx = 0; idx < room.connected.length; idx++) {
         var roomanddoor = room.connected[idx];
         var o_room=roomanddoor.room;
         var door=roomanddoor.door;
         if(door!=null){
-            if(room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL && o_room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL){
+            if(door.type()==PD.Generator.Dungeon.Door.Type.EMPTY){
                 this.setTileId(door.x, door.y, floorTile);
-            }else{
+            }else if(door.type()==PD.Generator.Dungeon.Door.Type.TUNNEL){
+                this.setTileId(door.x, door.y, tunnelTile);
+            }else if(door.type()==PD.Generator.Dungeon.Door.Type.REGULAR){
                 this.setTileId(door.x, door.y, doorTile);
+            }else if(door.type()==PD.Generator.Dungeon.Door.Type.UNLOCKED){
+                this.setTileId(door.x, door.y, doorTile);
+            }else if(door.type()==PD.Generator.Dungeon.Door.Type.HIDDEN){
+                this.setTileId(door.x, door.y, doorHiddenTile);
+            }else if(door.type()==PD.Generator.Dungeon.Door.Type.BARRICADE){
+                this.setTileId(door.x, door.y, PD.Helpers.randomFrom([barricadeTile, bookshelfTile]));
+            }else if(door.type()==PD.Generator.Dungeon.Door.Type.LOCKED){
+                this.setTileId(door.x, door.y, lockedDoorTile);
             }
+            // if(room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL && o_room.type()==PD.Generator.Dungeon.Room.Type.TUNNEL){
+            //     this.setTileId(door.x, door.y, floorTile);
+            // }else{
+            //     this.setTileId(door.x, door.y, doorTile);
+            // }
         }
     }
 }
@@ -735,6 +779,17 @@ PD.Generator.Dungeon.prototype.randomRoom=function(type, tryes) {
     }
     return null;
 }
+PD.Generator.Dungeon.prototype.randomDropCell=function() {
+    while (true) {
+        var room = this.randomRoom(PD.Generator.Dungeon.Room.Type.STANDARD, 1 );
+        if (room != null) {
+            var pos = room.random();
+            if (PD.Tiles.tile_Through($gameMap._dungeonGenerator.getTileId(pos.x, pos.y))) {
+                return pos;
+            }
+        }
+    }
+}
 PD.Generator.Dungeon.prototype.connectedsByType=function(types) {
     if(types==undefined){
         return this._connected;
@@ -887,6 +942,9 @@ if(isInMV && PluginManager!=undefined){
             }else{
                 $gamePlayer.reserveTransfer(this.mapId(),this._dungeonGenerator._entrancePoint.x, this._dungeonGenerator._entrancePoint.y, $gamePlayer.direction(), 2);
             }
+        }
+        if(this.hasGeneratedDungeon()){
+            this._dungeonGenerator.createItems();
         }
     }
     PD.Generator.Aliases.Game_Player=PD.Generator.Aliases.Game_Player||{};

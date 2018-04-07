@@ -35,6 +35,7 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Painter.prototype.fillByRectWithOffset=function(dungeonGenerator, rect, offset, val){
         this.fill(dungeonGenerator, rect.left+offset, rect.top+offset, rect.width() + 1 -offset*2, rect.height() + 1-offset*2, val);
     }
+    
     PD.Generator.Dungeon.Painter.prototype.drawInside=function(dungeonGenerator, room, pointFrom, n, val){
         var stepPoint=new PD.Generator.Dungeon.Point();
         if(pointFrom.x==room.left){

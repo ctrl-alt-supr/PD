@@ -15,17 +15,16 @@ PD.Dungeon.reset=function() {
     PD.Dungeon._discoveredTiles=[];
     PD.Dungeon._levels=[];
     PD.Dungeon._startPosType=PD.Dungeon.StartPosition.ENTRANCE;
-    PD.Dungeon.PotionKnowledge={};
-    PD.Dungeon._knownPotions=[];
-    PD.Dungeon.ScrollKnowledge={};
-    PD.Dungeon._knownScrolls=[];
-    PD.Dungeon.RingKnowledge={};
-    PD.Dungeon._knownRings=[];
-    PD.Dungeon.WandKnowledge={};
-    PD.Dungeon._knownWands=[];
+    PD.Dungeon.Knowledge={};
+    PD.Dungeon.Known={};
     PD.Dungeon._startPos=new PD.Generator.Dungeon.Point();
-    PD.Dungeon.PotionKnowledge=PD.Item.generatePotionKnowledge();
-    PD.Dungeon.ScrollKnowledge=PD.Item.generateScrollKnowledge();
+    var itemCatsRequiKnowl=PD.Item.CategoryNamesRequiringKnowledge();
+    for (var index = 0; index < itemCatsRequiKnowl.length; index++) {
+        var catName = itemCatsRequiKnowl[index];
+        PD.Dungeon.Knowledge[catName]=PD.Item.generateCategoryKnowledge(catName);
+    }
+    //PD.Dungeon.Knowledge[]=PD.Item.generateCategoryKnowledge("POTIONS");//PD.Item.generatePotionKnowledge();
+    //PD.Dungeon.ScrollKnowledge=PD.Item.generateCategoryKnowledge("SCROLLS");//PD.Item.generateScrollKnowledge();
     PD.Dungeon.lastCurrentDepth=0;
 }
 
@@ -38,40 +37,44 @@ DataManager.setupNewGame = function() {
         $dataSystem.startX, $dataSystem.startY);
     Graphics.frameCount = 0;
 };
-PD.Dungeon.identifiedPotionId=function(unidentifieditem){
-    for (var property in PD.Dungeon.PotionKnowledge) {
-        var element = PD.Dungeon.PotionKnowledge[property];
-        if(element==unidentifieditem.id){
-            return Number(property);
-        }
-    }
-    return null;
-}
-PD.Dungeon.identifiedScrollId=function(unidentifieditem){
-    for (var property in PD.Dungeon.ScrollKnowledge) {
-        var element = PD.Dungeon.ScrollKnowledge[property];
-        if(element==unidentifieditem.id){
-            return Number(property);
-        }
-    }
-    return null;
-}
-PD.Dungeon.unidentifiedPotionId=function(identifieditem){
-    for (var property in PD.Dungeon.PotionKnowledge) {
-        if(property==identifieditem.id){
-            return Number(PD.Dungeon.PotionKnowledge[property]);
-        }
-    }
-    return null;
-}
-PD.Dungeon.unidentifiedScrollId=function(identifieditem){
-    for (var property in PD.Dungeon.ScrollKnowledge) {
-        if(property==identifieditem.id){
-            return Number(PD.Dungeon.ScrollKnowledge[property]);
-        }
-    }
-    return null;
-}
+// PD.Dungeon.identifiedPotionId=function(unidentifieditem){
+//     return PD.Item.unknownItemToKnown(unidentifieditem.id);
+//     // for (var property in PD.Dungeon.PotionKnowledge) {
+//     //     var element = PD.Dungeon.PotionKnowledge[property];
+//     //     if(element==unidentifieditem.id){
+//     //         return Number(property);
+//     //     }
+//     // }
+//     // return null;
+// }
+// PD.Dungeon.identifiedScrollId=function(unidentifieditem){
+//     return PD.Item.unknownItemToKnown(unidentifieditem.id);
+//     // for (var property in PD.Dungeon.ScrollKnowledge) {
+//     //     var element = PD.Dungeon.ScrollKnowledge[property];
+//     //     if(element==unidentifieditem.id){
+//     //         return Number(property);
+//     //     }
+//     // }
+//     // return null;
+// }
+// PD.Dungeon.unidentifiedPotionId=function(identifieditem){
+//     return PD.Item.knownItemToUnknown(identifieditem.id);
+//     // for (var property in PD.Dungeon.PotionKnowledge) {
+//     //     if(property==identifieditem.id){
+//     //         return Number(PD.Dungeon.PotionKnowledge[property]);
+//     //     }
+//     // }
+//     // return null;
+// }
+// PD.Dungeon.unidentifiedScrollId=function(identifieditem){
+//     return PD.Item.knownItemToUnknown(identifieditem.id);
+//     // for (var property in PD.Dungeon.ScrollKnowledge) {
+//     //     if(property==identifieditem.id){
+//     //         return Number(PD.Dungeon.ScrollKnowledge[property]);
+//     //     }
+//     // }
+//     // return null;
+// }
 PD.Dungeon.level=function(depth){
     if(this._levels[depth]!=undefined && this._levels[depth]!=null){
         return this._levels[depth];
@@ -84,6 +87,44 @@ PD.Dungeon.hasLevel=function(depth){
         return true;
     }else{
         return false;
+    }
+}
+PD.Dungeon.tryUseKey=function(special){
+    var depth=PD.Dungeon.currentDepth();
+    if((special?this._levels[depth]._spKeys>0:this._levels[depth]._keys>0)){
+        special?this._levels[depth].removeSpKey():this._levels[depth].removeKey();
+        return true;
+    }
+    return false;
+}
+PD.Dungeon.addBossKey=function(depth){
+    if(depth==undefined || depth==null || depth==0) depth=PD.Dungeon.currentDepth();
+    this._levels[depth].addBossKey();
+}
+PD.Dungeon.removeBossKey=function(depth){
+    if(depth==undefined || depth==null || depth==0) depth=PD.Dungeon.currentDepth();
+    this._levels[depth].removeBossKey();
+}
+PD.Dungeon.addKey=function(depth, special){
+    if(depth==undefined || depth==null || depth==0) depth=PD.Dungeon.currentDepth();
+    if(special==undefined)special=false;
+    if(this._levels[depth]!=undefined && this._levels[depth]!=null){
+        if(special){
+            this._levels[depth].addSpKey();
+        }else{
+            this._levels[depth].addKey();
+        }
+    }
+}
+PD.Dungeon.removeKey=function(depth, special){
+    if(depth==undefined || depth==null || depth==0) depth=PD.Dungeon.currentDepth();
+    if(special==undefined)special=false;
+    if(this._levels[depth]!=undefined && this._levels[depth]!=null){
+        if(special){
+            this._levels[depth].removeSpKey();
+        }else{
+            this._levels[depth].removeKey();
+        }
     }
 }
 PD.Dungeon.generator=function(depth){

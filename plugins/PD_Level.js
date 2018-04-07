@@ -12,6 +12,9 @@ PD.Level=function(depthOpts){
         this._levelOptions=depthOpts;
         this._feeling=PD.Level.Feeling.NONE;
         this._generator=new PD.Generator.Dungeon(this);
+        this._keys=0;
+        this._spKeys=0;
+        this._bossKeys=0;
     }
 }
 PD.Level.prototype.constructor=PD.Level;
@@ -23,6 +26,24 @@ PD.Level.prototype.generator=function(){
 }
 PD.Level.prototype.map=function(){
     return this._generator.map();
+}
+PD.Level.prototype.addKey=function(){
+    this._keys+=1;
+}
+PD.Level.prototype.addSpKey=function(){
+    this._spKeys+=1;
+}
+PD.Level.prototype.addBossKey=function(){
+    this._bossKeys+=1;
+}
+PD.Level.prototype.removeKey=function(){
+    this._keys-=1;
+}
+PD.Level.prototype.removeSpKey=function(){
+    this._spKeys-=1;
+}
+PD.Level.prototype.removeBossKey=function(){
+    this._bossKeys-=1;
 }
 PD.Level.prototype.passabilityMap=function(){
     var originalMap=JSON.parse(JSON.stringify(this.map()));
@@ -41,6 +62,10 @@ PD.Level.prototype.water=function(generator) {
 PD.Level.prototype.grass=function(generator) {
     return generator.generateTerrainPatch( this._feeling == PD.Level.Feeling.GRASS ? 0.60 : 0.40, 4 );
 }
+PD.Level.prototype.tunnelTile=function(){
+    return this._feeling == PD.Level.Feeling.CHASM ? PD.Tiles.name2id("FLOORSP") : PD.Tiles.name2id("ROOMFLOOR");
+}
+
 PD.Level.prototype.decorate=function(generator) {
     var wallTile=PD.Tiles.name2id("WALL");
     var wallDecoTile=PD.Tiles.name2id("DECOWALL");

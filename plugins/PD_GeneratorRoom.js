@@ -77,10 +77,26 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Door=function(x, y){
         PD.Generator.Dungeon.Point.prototype.constructor.call(this, x, y);
         this.GUID=Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1)+Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
+        this._type=PD.Generator.Dungeon.Door.Type.EMPTY;
     }
     PD.Generator.Dungeon.Door.prototype = Object.create(PD.Generator.Dungeon.Point.prototype);
     PD.Generator.Dungeon.Door.prototype.constructor = PD.Generator.Dungeon.Door;
-
+    PD.Generator.Dungeon.Door.Type={
+        EMPTY:0, 
+        TUNNEL:1, 
+        REGULAR:2, 
+        UNLOCKED:3, 
+        HIDDEN:4, 
+        BARRICADE:5, 
+        LOCKED:6
+    };
+    PD.Generator.Dungeon.Door.prototype.type=function(t){
+        if(t!=undefined && t!=null){
+            this._type=t;
+        }
+        return this._type;
+    }
+    
     /**
      * @enum {number} 
      * @readonly
@@ -138,6 +154,9 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
         }
         if(typeToGet==PD.Generator.Dungeon.Room.Type.WEAK_FLOOR){
             return  new PD.Generator.Dungeon.Painters.WeakFloor();
+        }
+        if(typeToGet==PD.Generator.Dungeon.Room.Type.LABORATORY){
+            return  new PD.Generator.Dungeon.Painters.Laboratory();
         }
         // }else if(typeToGet==PD.Generator.Dungeon.Room.Type.PASSAGE){
         //     return  PD.Generator.Dungeon.Painters.SimplePassage;

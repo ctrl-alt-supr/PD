@@ -25,6 +25,7 @@ var $plugins =
 {"name":"PD_Painter_Entrance","status":true,"description":"","parameters":{}},
 {"name":"PD_Painter_Exit","status":true,"description":"","parameters":{}},
 {"name":"PD_Painter_WeakFloor","status":true,"description":"","parameters":{}},
+{"name":"PD_Painter_Laboratory","status":true,"description":"","parameters":{}},
 {"name":"PD_Painter_Simple","status":true,"description":"","parameters":{}},
 {"name":"======UI=================================================","status":false,"description":"","parameters":{}},
 {"name":"PD_Poses","status":true,"description":"","parameters":{}},

@@ -8,7 +8,13 @@ if(PD==undefined||PD.Generator==undefined||PD.Generator.Dungeon==undefined){
     PD.Generator.Dungeon.Painters.Standard.prototype.constructor=PD.Generator.Dungeon.Painters.Standard;
 
     PD.Generator.Dungeon.Painters.Standard.prototype.paint=function(dungeonGenerator, room){
-        
+        var connectedDoors=room.connected.map(function(ea){
+            return ea.door;
+        });
+        for (var doorIndex = 0; doorIndex < connectedDoors.length; doorIndex++) {
+            var door = connectedDoors[doorIndex];
+            door.type(PD.Generator.Dungeon.Door.Type.REGULAR);
+        }
         if (PD.Helpers.randomInteger( 1 ) == 0) {
             switch (PD.Helpers.randomInteger( 2 )) {
                 case 0:
